@@ -1,9 +1,10 @@
 <?php
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Http\Request;
+use Laravel\Socialite\Facades\Socialite;
 
 class GoogleController extends Controller
 {
@@ -12,7 +13,8 @@ class GoogleController extends Controller
         if ($request->has('clientType')) {
             session(['clientType' => $request->clientType]);
         }
-        return Socialite::driver('google')->redirect();
+
+        return Socialite::driver('google')->stateless()->redirect();
     }
 
     public function handleGoogleCallback()
@@ -21,18 +23,25 @@ class GoogleController extends Controller
             $googleUser = Socialite::driver('google')->stateless()->user();
             $email = $googleUser->getEmail();
 
-            return response()->make("
+            $safeEmail = json_encode($email);
+
+            return response("
                 <script>
                     if (window.opener) {
-                        window.opener.postMessage({ google_email: '$email' }, '*');
+                        window.opener.postMessage({ google_email: {$safeEmail} }, '*');
                         window.close();
                     } else {
-                        alert('No opener window found.');
+                        document.body.innerHTML = 'Google login succeeded, but no opener window was found.';
                     }
                 </script>
             ");
-        } catch (\Exception $e) {
-            return "<script>alert('Failed to fetch Google email'); window.close();</script>";
+        } catch (\Throwable $e) {
+            return response("
+                <script>
+                    alert('Failed to fetch Google email: " . addslashes($e->getMessage()) . "');
+                    window.close();
+                </script>
+            ", 500);
         }
     }
 }
