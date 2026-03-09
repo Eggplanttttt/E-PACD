@@ -684,7 +684,7 @@ section{
 .register-tutorial-link {
   display: block;
   margin-top: 1.2rem;
-  margin-left: -300px;
+  margin-left: -320px !important;
   color: #ffffff;
   font-size: 1.55rem;
   font-weight: 600;
@@ -1182,6 +1182,9 @@ section{
   .tutorial-steps {
     grid-template-columns: 1fr;
   }
+  .register-tutorial-link{
+  margin-left: -150px !important;
+}
 }
 
 .scroll-down-indicator {
@@ -1234,9 +1237,6 @@ section{
 }
 
 
-.register-tutorial-link{
-  margin-left: -150px;
-}
 
 
 
@@ -1470,15 +1470,16 @@ section{
 
 .assistance-tooltip {
     position: fixed;
-    right: 350px;
-    bottom: 55px;
-    left: auto;
+    right: auto;
+    bottom: auto;
+    left: 80px !important;
+    top: 0;
     transform: translateY(-10px);
     background-color: #027238;
     box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     color: #fff;
     padding: 10px 15px;
-    margin-bottom: 8px;
+    margin-bottom: 0;
     border-radius: 8px;
     font-size: 14px;
     opacity: 0;
@@ -1488,6 +1489,8 @@ section{
     max-width: min(260px, calc(100vw - 24px));
     white-space: normal;
     text-align: center;
+    padding-right: -30px !important;
+    margin-top: -400px !important;
 }
 
 .assistance-tooltip.show {
@@ -2458,14 +2461,17 @@ section{
   }
 
   .assistance-tooltip {
-    right: 12px !important;
-    left: auto !important;
+    right: auto !important;
+    left: 0 !important;
+    top: 0 !important;
+    bottom: 10 !important;
     transform: translateY(-8px);
     max-width: 82vw;
     white-space: normal;
     font-size: 12px;
     padding: 8px 10px;
-    bottom: 85px;
+    padding-right: -20px !important;
+    margin-top: -50px !important;
   }
 
   .tooltip-arrow {
