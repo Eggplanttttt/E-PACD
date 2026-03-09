@@ -351,7 +351,7 @@
 
 
 
-<script src="{{ asset('js/bootstrap@5.3.2/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
 @if(session('login_failed'))
 <script>
 document.addEventListener("DOMContentLoaded", function () {
