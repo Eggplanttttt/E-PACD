@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Mail;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
+use Illuminate\Queue\SerializesModels;
+
+class FeedbackThankYouMail extends Mailable
+{
+    use Queueable, SerializesModels;
+
+    public $name;
+
+    public function __construct($name)
+    {
+        $this->name = $name;
+    }
+
+    public function build()
+    {
+        return $this->subject('Thank You for Your Feedback')
+                    ->view('emails.feedback_thank_you')
+                    ->with([
+                        'name' => $this->name
+                    ]);
+    }
+}

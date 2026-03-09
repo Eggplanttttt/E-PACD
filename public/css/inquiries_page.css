@@ -1,0 +1,1641 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Roboto:wght@100;300;400;500;700&display=swap');
+
+:root{
+    --main-color: #ffffff;
+    --white: #ffffff;
+    --bg: hsl(0, 0%, 100%);
+    --border: .1rem solid #000;
+}
+
+*{
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+    border: none;
+    text-decoration: none;
+    transition: .2s linear;
+}
+
+html{
+    font-size: 65.5%;
+    overflow-x: hidden;
+    scroll-padding-top: 9rem;
+    scroll-behavior: smooth;
+}
+
+html::-webkit-scrollbar{
+    width: .2rem;
+}
+
+html::-webkit-scrollbar-track{
+    background: transparent;
+}
+
+html::-webkit-scrollbar-thumb{
+    background: #014421;
+    border-radius: .1rem;
+}
+
+body {
+    background-image: url('/assets/qsu_bg.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    position: relative; /* Required for the overlay */
+    z-index: 0;
+}
+
+/* White overlay to lighten background */
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.637); /* Adjust opacity (0.7–0.9 recommended) */
+    z-index: -1;
+}
+
+
+section{
+    padding: 2rem 7%;
+}
+
+.heading{
+    text-align: center;
+    color: #000000;
+    text-transform: uppercase;
+    padding-bottom: 3.5rem;
+    font-size: 4rem;
+}
+
+.heading span{
+    color: #0edd87;
+    text-transform: uppercase;
+}
+
+.btn{
+    margin-top: 1rem;
+    display: inline-block;
+    padding: .9rem 3rem;
+    font-size: 1.7rem;
+    color: #fff;
+    background: #000000;
+    cursor: pointer;
+}
+
+.btn:hover{
+    letter-spacing: .2rem;
+}
+
+.header{
+    background: #014421;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.6rem 6%;
+    border-bottom: var(--bg);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo-text-img{
+    display: inline-flex;
+    margin-right: 10px;
+}
+
+.logo-container img {
+    width: 60px; 
+    height: 40px;
+    margin-top: 7px;
+
+}
+
+.facebook-btn{
+  background:#1877F2;
+  color:#fff;
+  padding: 12px 12px 10px !important;
+  height: 44px;
+    margin-top: 20px;
+
+}
+.facebook-btn:hover{
+  filter: brightness(0.95);
+}
+
+/* .logo-text {
+    color: black;
+    text-align: center; 
+    font-family: Georgia;
+}
+
+.logo-text h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.logo-text h2{
+    font-size: 15px;
+} 
+
+.inline-text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px; 
+}
+
+.inline-text h2, .inline-text h3 {
+    margin: 0;
+    font-weight: bold;
+}
+
+.inline-text h2 {
+    font-size: 18px;
+}
+
+.inline-text h3 {
+    font-size: 16px;
+} */
+
+/* Bigger password validation messages */
+#passwordError,
+#confirmPasswordError,
+#passwordErrorFaculty,
+#confirmPasswordErrorFaculty,
+#passwordErrorAlumni,
+#confirmPasswordErrorAlumni,
+#passwordErrorOthers,
+#confirmPasswordErrorOthers{
+  font-size: 14px;     /* change to 15px/16px if you want bigger */
+  font-weight: 600;
+  line-height: 1.3;
+  margin-top: 6px;
+  display: block;      /* ensures it sits nicely under the input */
+}
+
+/* Small helper note for reminders */
+.helper-note{
+  font-size: 12px;
+  line-height: 1.4;
+  margin-top: 6px;
+  color: #6b7280; /* gray */
+}
+
+.helper-note strong{
+  color: #374151;
+}
+
+.helper-note i{
+  margin-right: 6px;
+}
+
+/* Overlay */
+#privacyModal.modal-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(3px);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 40px 20px;
+  overflow-y: auto;
+  z-index: 9999;
+}
+
+/* Modal card (THIS matches your HTML: class="modal-box") */
+#privacyModal .modal-box{
+  background: #fff;
+  width: min(92vw, 620px);
+  border-radius: 12px;
+  box-shadow: 0 12px 35px rgba(0,0,0,.25);
+  overflow: hidden;
+
+  /* Important for tall content */
+  max-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header (optional but makes it look pro) */
+#privacyModal .modal-box h3{
+  margin: 0;
+  padding: 14px 18px;
+  background: #0b5c2c;
+  color: #fff;
+  font-size: 16px;
+}
+
+/* Scrollable body */
+#privacyModal .privacy-text{
+  padding: 16px 18px;
+  overflow: auto;
+  line-height: 1.55;
+  font-size: 14px;
+}
+
+/* Footer button area */
+#privacyModal .modal-box button{
+  margin: 14px 18px 18px;
+  align-self: flex-end;
+}
+
+
+/* Overlay background */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(3px);
+
+    display: flex;
+    justify-content: center;
+
+    /* 🔥 this is the fix */
+    align-items: center;
+    padding: 40px 20px; /* gives space top & bottom */
+    overflow-y: auto;   /* allows scrolling on small screens */
+
+    z-index: 9999;
+}
+
+/* Modal card */
+.privacy-modal {
+    background: #fff;
+    width: 90%;
+    max-width: 520px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.25);
+    animation: modalFade .25s ease;
+}
+
+/* Header */
+.privacy-modal-header {
+    background: #0c5c2c;
+    color: #fff;
+    padding: 15px 20px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Body */
+.privacy-modal-body {
+    padding: 18px;
+    max-height: 420px;
+    overflow-y: auto;
+}
+
+/* Footer */
+.privacy-modal-footer {
+    padding: 14px 18px;
+    background: #f5f7f6;
+    border-top: 1px solid #e5e5e5;
+    text-align: right;
+}
+
+/* Close button */
+.privacy-close-btn {
+    background: #0c5c2c;
+    color: #fff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.privacy-close-btn:hover {
+    background: #094521;
+}
+
+/* Text formatting */
+.privacy-text { line-height:1.55; font-size:14px; }
+.privacy-text ul { margin:8px 0 12px 18px; }
+.privacy-text li { margin:4px 0; }
+
+@keyframes modalFade {
+    from { transform: translateY(25px); opacity:0; }
+    to { transform: translateY(0); opacity:1; }
+}
+
+
+
+.logo-container .gov{
+    font-size: 1.9rem;
+    font-weight: bolder;
+    color: #fff;
+    margin-right: 30px;
+}
+
+.logo-container .arta {
+  width: 90px;
+  height: auto;
+  padding-left: -10px;
+}
+
+.logo-container .bagong_pilipinas {
+  height: 35px;
+  width: auto;
+  margin-right: 30px;
+}
+
+.navbar{
+    margin-left: 280px;
+}
+
+.header .navbar a{
+    margin: 0.8rem;
+    font-size: 1.7rem;
+    color: #fff;
+}
+
+.header .navbar a:hover{
+    color: #0edd87;
+    border-bottom: .1rem solid #0edd87;
+    padding-bottom: .5rem;
+}
+
+.header .icon div{
+    color: #0edd87;
+    cursor: pointer;
+    font-size: 2.5rem;
+    margin: 2rem;
+}
+
+.header .icon div:hover{
+    color: #0edd87;
+}
+
+#menu-btn{
+    display: none;
+}
+
+.navbar .dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.navbar .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgb(1, 60, 43, 0.7);
+    z-index: 1;
+    border-radius: 5px;
+}
+
+.navbar .dropdown-content a {
+    color: #014421;
+    padding: 10px 15px;
+    text-decoration: none;
+    display: block;
+    transition: background 0.3s, color 0.3s;
+}
+
+.navbar .dropdown-content a:hover {
+    background-color: #027238;
+    color: #fff;
+}
+
+.navbar .dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.navbar .dropdown:hover > a {
+    color: #0edd87;
+}
+
+/* 🔹 MOBILE RESPONSIVENESS */
+@media (max-width: 991px) {
+
+    .modal-overlay{
+        width: 50%;
+    }
+
+    .form-popup{
+        width: 85%;
+    }
+
+    .form-box .form-details{
+        display: none;
+    }
+    
+    .form-box .form-content{
+        padding: 30px 20px;
+    }
+
+    .header {
+        padding: 1.5rem 3%;
+    }
+
+    .logo-container {
+        transform: scale(0.8);
+        transform-origin: center; /* keeps position */
+        margin-right: 0px;
+    }
+
+    .logo-text-img{
+        display: flex;
+    }
+
+    .logo-container img {
+        width: 60px; /* slightly smaller logo */
+        height: auto;
+        margin-left: 10px;
+    }
+
+    .logo-text {
+        font-size: 0.85em; /* scales down the entire text block */
+        line-height: 1.1;
+        margin-left: 20px;
+    }
+
+    .logo-text h4 {
+        font-size: 12px;
+    }
+
+    .inline-text h2 {
+        font-size: 14px;
+    }
+
+    .inline-text h3 {
+        font-size: 12px;
+    }
+
+    .logo-text h2 {
+        font-size: 14px;
+    }
+
+    .logo-container .gov {
+        font-size: 1.9rem; /* ensure GOVPH stays readable */
+        margin-left: 1px;
+    }
+
+
+    /* Hide navbar by default on mobile */
+    .navbar {
+        display: none;
+        position: absolute;
+        top: 100%;
+        right: 3%;
+        background: rgb(1, 60, 43);
+        flex-direction: column;
+        width: 220px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        padding: 10px 0;
+        z-index: 999;
+        animation: fadeInDown 0.3s ease;
+    }
+
+    /* When menu active */
+    .navbar.active {
+        display: flex;
+    }
+
+    .navbar a {
+        display: block;
+        margin: 0;
+        padding: 12px 20px;
+        font-size: 1.6rem;
+    }
+
+    .navbar a:hover {
+        background-color: rgb(1, 60, 43);
+        color: #0edd87;
+        border: none;
+        padding-bottom: 12px;
+        transition: background 0.3s ease;
+    }
+
+    /* Dropdown styling inside mobile */
+    .navbar .dropdown {
+        width: 100%;
+    }
+
+    .navbar .dropdown-content {
+        position: static;
+        background-color: #f8f8f8;
+        box-shadow: none;
+        border-radius: 0;
+        min-width: unset;
+        padding-left: 20px;
+    }
+
+    .navbar .dropdown-content a {
+        font-size: 1.5rem;
+        padding: 10px 0;
+        color: rgb(1, 60, 43);
+    }
+
+    .contact-inputs option {
+        font-size: 1rem;
+        font-weight: 500;
+        width: 50% !important;
+        padding: 8px;
+        border-radius: 10px;
+        margin-bottom: 25px;
+        border: 1px solid #ccc;
+        cursor: pointer;
+    }
+
+    /* Show burger icon */
+    #menu-btn {
+        display: block;
+        color: #0edd87;
+        font-size: 2.8rem;
+        cursor: pointer;
+    }
+}
+
+/* 🔹 Optional smooth dropdown animation */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+ /* Custom styles for modal and forms */
+ .modal-overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    z-index: 999;
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-box {
+    background: #fff;
+    padding: 40px 50px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 600px;
+    margin-top: -80px;
+    text-align: center;
+    font-size: 1.6rem !important;
+    font-weight: 500;
+}
+
+.modal-box h2 {
+    font-size: x-large;
+}
+
+.modal-message {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+    display: none;
+    z-index: 9999;
+}
+
+
+
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.modal-content ul {
+    list-style: none;
+    padding: 0;
+    font-size: large;
+    font-weight: 400;
+}
+
+.modal-content p {
+    font-size: large;
+    font-weight: 400;
+}
+
+.modal-content button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 19px;
+}
+
+.modal-title {
+    font-size: 2.8rem !important;
+    font-weight: 700;
+    color: #013220;
+    margin-bottom: 10px;
+}
+
+/* Description */
+.modal-description {
+    font-size: 1.5rem;
+    color: #555;
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+.contact-inputs {
+    font-size: 2rem;
+    color: rgb(1, 60, 43);
+    font-weight: 500;
+    width: 100%;
+    padding: 12px;
+    border-radius: 80px;
+    margin-bottom: 25px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+select.contact-inputs {
+    text-align: center;           
+    -moz-text-align-last: center; 
+    text-align-last: center;     
+    padding: 10px;
+    font-size: 2rem;
+    border-radius: 40px;
+    border: 2px solid #004d3a;
+    width: 60%;
+    margin: 0 auto;
+    display: block;
+    margin-top: 20px;
+}
+
+.contact-inputs:focus {
+    border: 2px solid rgb(1, 60, 43);
+    outline: none;
+}
+
+.contact-card.hidden {
+    display: none; 
+    opacity: 0; 
+    pointer-events: none; 
+}
+
+.contact-card {
+    display: block; 
+    opacity: 1; 
+    pointer-events: auto; 
+    transition: opacity 0.3s ease-in-out; 
+    width: 100%;
+    max-width: 600px; 
+    margin: 20px auto; 
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: rgb(1, 60, 43);
+    margin-top: 100px;
+}
+
+/* Optional: Add some specific styling to forms when they are displayed inside the contact card */
+.contact-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.contact-card form input,
+.contact-card form textarea {
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1.5rem;
+    width: 100%;
+    color: rgb(1, 60, 43);
+    margin-bottom: 10px;
+}
+
+/* Optional: Add a hover effect on form buttons */
+.contact-card form button {
+    padding: 1rem;
+    background-color: #0edd87;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.contact-card form button:hover {
+    background-color: rgb(1, 60, 43);
+}
+
+.contact-left p {
+    margin-bottom: -30px;
+    font-size: 1.3rem;
+}
+
+.contact-left-title {
+    font-size: 1.5rem;
+    font-weight: 400;
+}
+
+.center-container {
+    display: flex;
+    justify-content: center;
+    margin-right: 20px;
+    align-items: center; /* This centers vertically and horizontally within the viewport */
+}
+
+.center-container option {
+    margin-right: 30px;
+}
+
+.clientButton {
+    padding: 12px 30px;
+    border-radius: 5px;
+    background-color: rgb(1, 60, 43);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 1.6rem;
+    transition: background-color 0.3s;
+    margin-top: 20px;
+}
+
+.clientButton:hover {
+    background-color: #e6cf08;
+}
+
+.registerButton {
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.client-title {
+    text-align: center;
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: #013220;
+    margin-bottom: 20px;
+}
+
+.client-desc {
+    text-align: center;
+    font-size: 1rem;
+    color: #444;
+    margin-bottom: 20px !important;
+}
+
+
+.hidden { 
+    display: none !important;
+}
+
+#clienttype {
+    display: none;
+}
+
+#clientTypeModal {
+    display: none; 
+    justify-content: center;
+    align-items: center;
+}
+
+#clientTypeSelect, #clientTypeSelector  {
+    -webkit-appearance: none; 
+    -moz-appearance: none;     
+    appearance: none;          
+    padding-right: 30px;      
+}
+
+.custom-select-wrapper {
+    position: relative;
+    display: inline-block; 
+    width: 100%;
+}
+
+.dropdown-arrow {
+    position: absolute;
+    right: 105px; 
+    top: 65%;
+    transform: translateY(-50%);
+    pointer-events: none; 
+    color: #555;   
+    font-size: 16px; 
+}
+
+
+.data-privacy {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 15px 0;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 5px;
+}
+
+.data-privacy label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #495057;
+    margin: 0;
+}
+
+.data-privacy input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #0d6efd;
+    margin-top: 8px;
+}
+
+.data-privacy a {
+    margin-left: 10px;
+    text-decoration: none;
+    color: #0d6efd;
+    font-weight: 500;
+    font-size: 14px;
+    transition: color 0.2s ease;
+}
+
+.data-privacy a:hover {
+    color: #0a58ca;
+    text-decoration: underline;
+}
+
+/* Optional: Add focus states for accessibility */
+.data-privacy input[type="checkbox"]:focus {
+    outline: 2px solid #0d6efd;
+    outline-offset: 2px;
+}
+
+/* Modal Box */
+.modal-box {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.modal-box h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    border-bottom: 2px solid #0d6efd;
+    padding-bottom: 10px;
+}
+
+.modal-box p {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.modal-box button {
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+
+.modal-box button:hover {
+    background-color: #0a58ca;
+}
+
+/* Focus states for accessibility */
+.data-privacy input[type="checkbox"]:focus,
+.modal-box button:focus {
+    outline: 2px solid #0d6efd;
+    outline-offset: 2px;
+}
+
+.forgot-password{
+    font-weight:600;
+    font-size: small;
+}
+
+.google-btn {
+    display: inline-block;
+    background-color: #4285F4;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight:600;
+    font-size: small;
+}
+
+.google-btn i {
+    margin-right: 8px;
+}
+
+.contact-left {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.contact-left p {
+    margin-bottom: 1px;
+    font-weight: 600;  
+}
+
+.form-header {
+    position: relative;
+}
+
+.back-btn {
+    all: unset;               
+    position: absolute;
+    top: 5px;
+    right: 15px;
+    color: #333;
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.3s ease;
+}
+
+.back-btn:hover {
+    color: #007bff;            /* optional hover color */
+}
+
+.back-btn i {
+    pointer-events: none;      /* ensures only the button clicks */
+}
+
+.input-box {
+    border: 1px solid #ccc;
+    padding: 12px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background-color: #f9f9f9;
+    max-width: 600px;
+}
+
+.input-box select {
+    font-size: 16px;
+    color: rgb(1, 60, 43);
+}
+
+.course-year-dropdowns {
+    display: flex;
+    gap: 8px;
+}
+
+.course-year-dropdowns select {
+    flex: 1;
+    padding: 5px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+
+/* -------------------
+   Professional Custom Modal
+------------------- */
+.custom-modal {
+    display: none; 
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6); 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    backdrop-filter: blur(2px); 
+    animation: fadeIn 0.3s ease;
+}
+
+.custom-modal-content {
+    background-color: #ffffff;
+    margin: 12% auto;
+    padding: 25px 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 450px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    position: relative;
+    animation: slideDown 0.4s ease;
+}
+
+.custom-modal-content p {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.custom-modal-content .modal-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #1a1a1a;
+}
+
+.custom-close {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    color: #888;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.custom-close:hover {
+    color: #000;
+}
+
+/* Optional action button inside modal */
+.custom-modal-content button {
+    background-color: #004aad; /* QSU blue */
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 18px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.custom-modal-content button:hover {
+    background-color: #003380;
+    transform: translateY(-2px);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+
+
+/* ==============================
+   CLIENT TYPE MODAL (MOBILE FIT)
+============================== */
+@media (max-width: 480px){
+
+  /* Center properly + allow safe scrolling */
+  #clientTypeModal.modal-overlay{
+    padding: 14px;
+  }
+
+  #clientTypeModal .modal-box{
+    width: 100%;
+    max-width: 420px;
+    margin-top: 0 !important;
+
+    padding: 18px 16px;
+    border-radius: 16px;
+
+    /* Fit inside the phone screen */
+    max-height: calc(100svh - 28px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #clientTypeModal .modal-title{
+    font-size: 1.9rem !important;
+    line-height: 1.25;
+    margin-bottom: 8px;
+  }
+
+  #clientTypeModal .modal-description{
+    font-size: 1.25rem;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+
+  /* Make dropdown full width on mobile */
+  #clientTypeModal select.contact-inputs{
+    width: 100% !important;
+    font-size: 1.6rem;
+    padding: 12px 44px 12px 14px; /* space for arrow */
+    border-radius: 14px;
+    margin-top: 10px;
+  }
+
+  /* Arrow should sit inside the select area */
+  #clientTypeModal .dropdown-arrow{
+    right: 16px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    font-size: 16px;
+  }
+
+  #clientTypeModal .clientButton{
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    font-size: 1.6rem;
+    margin-top: 14px;
+  }
+
+.modal-overlay{
+    padding: 14px;                  /* space from edges */
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-box{
+    width: 100%;
+    max-width: 420px;
+    margin-top: 0 !important;       /* remove the -80px behavior */
+    padding: 18px 16px;
+    border-radius: 14px;
+
+    max-height: 82vh;               /* prevents cut off */
+    overflow-y: auto;               /* scroll inside modal */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .modal-title{
+    font-size: 1.9rem !important;
+    line-height: 1.2;
+  }
+
+  .modal-description{
+    font-size: 1.25rem;
+    margin-bottom: 16px;
+  }
+
+  /* Your select is too wide/large on mobile */
+  select.contact-inputs{
+    width: 100%;
+    font-size: 1.6rem;
+    border-radius: 14px;
+    padding: 12px 44px 12px 14px; /* space for arrow */
+  }
+
+  /* Arrow: make it consistently positioned */
+  .custom-select-wrapper{ width: 100%; }
+  .dropdown-arrow{
+    right: 16px !important;
+    top: 50% !important;
+    transform: translateY(-50%);
+  }
+
+  .clientButton{
+    width: 100%;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 1.5rem;
+  }
+}
+
+
+@media (max-width: 991px){
+
+  /* Allow page to scroll naturally on mobile */
+  body{
+    display: block;
+    min-height: 100vh;
+    padding-top: 176px; /* space for fixed header */
+  }
+
+  .contact-card{
+    width: calc(100% - 24px);
+    max-width: 520px;
+    margin: 12px auto;
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  /* Titles & spacing */
+  .client-title{ font-size: 1.8rem; }
+  .client-desc{ font-size: 1.2rem; }
+
+  /* Inputs scale down nicely */
+  .contact-inputs{
+    font-size: 1.6rem;
+    border-radius: 14px;
+    padding: 12px 14px;
+  }
+
+  /* Client type select inside the card */
+  #clienttype select.contact-inputs{
+    width: 100%;
+  }
+
+  /* That inline arrow style right:125px breaks on phones */
+  #clienttype .dropdown-arrow{
+    right: 16px !important;
+  }
+}
+
+
+/* =====================================
+   Final Mobile Responsiveness Overrides
+   (appended last to safely override duplicates)
+===================================== */
+
+/* Tablet down */
+@media (max-width: 991.98px) {
+  html {
+    font-size: 58%;
+  }
+
+  body {
+    display: block;
+    align-items: initial;
+    justify-content: initial;
+    min-height: 100vh;
+    padding-top: 92px;
+    background-attachment: scroll;
+  }
+
+  body::before {
+    position: fixed;
+  }
+
+  .header {
+    padding: 1rem 0.9rem;
+    min-height: 72px;
+  }
+
+  .logo-container {
+    transform: none !important;
+    margin-right: 0 !important;
+    gap: 8px;
+  }
+
+  .logo-container img {
+    width: 46px;
+    height: auto;
+    margin: 0;
+  }
+
+  .logo-container .bagong_pilipinas {
+    height: 30px !important;
+    margin-right: 8px;
+  }
+
+  .logo-container .arta {
+    width: 70px !important;
+  }
+
+  .logo-container .gov {
+    font-size: 1.35rem !important;
+    margin-right: 8px;
+    max-width: 95px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #menu-btn {
+    display: block;
+    font-size: 2.2rem !important;
+    margin: 0 0 0 8px;
+  }
+
+  .navbar {
+    margin-left: 0 !important;
+    right: 8px !important;
+    width: min(280px, calc(100vw - 16px)) !important;
+    max-height: 72vh;
+    overflow-y: auto;
+    border-radius: 12px;
+    padding: 6px 0;
+  }
+
+  .navbar a {
+    font-size: 1.45rem !important;
+    padding: 11px 14px !important;
+  }
+
+  .contact-card {
+    width: calc(100% - 16px) !important;
+    max-width: 560px;
+    margin: 10px auto !important;
+    padding: 14px !important;
+    border-radius: 12px;
+    margin-top: 70px !important;
+  }
+
+  .client-title {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+  }
+
+  .client-desc {
+    font-size: 1.25rem;
+    margin-bottom: 12px !important;
+  }
+
+  .contact-left p {
+    margin-bottom: 2px;
+    font-size: 1.25rem;
+  }
+
+  .contact-left-title {
+    font-size: 1.35rem;
+  }
+
+  .contact-card form {
+    gap: 1rem;
+  }
+
+  .contact-card form input,
+  .contact-card form textarea,
+  .contact-inputs,
+  select.contact-inputs {
+    width: 100% !important;
+    font-size: 1.5rem !important;
+    border-radius: 12px !important;
+    padding: 11px 12px !important;
+    margin-bottom: 10px;
+  }
+
+  .custom-select-wrapper {
+    width: 100%;
+  }
+
+  .dropdown-arrow,
+  #clienttype .dropdown-arrow,
+  #clientTypeModal .dropdown-arrow {
+    right: 14px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+  }
+
+  .course-year-dropdowns {
+    gap: 8px;
+  }
+
+  .course-year-dropdowns select {
+    font-size: 1.35rem;
+    padding: 9px;
+  }
+
+  .clientButton,
+  .google-btn,
+  .facebook-btn {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 1.45rem;
+    padding: 11px 12px !important;
+    margin-top: 10px;
+  }
+
+  .forgot-password {
+    font-size: 1.2rem;
+  }
+
+  .modal-overlay,
+  #privacyModal.modal-overlay,
+  #clientTypeModal.modal-overlay {
+    width: 100% !important;
+    padding: 12px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow-y: auto;
+  }
+
+  .modal-box,
+  #privacyModal .modal-box,
+  #clientTypeModal .modal-box,
+  .privacy-modal {
+    width: 100% !important;
+    max-width: 520px !important;
+    margin-top: 0 !important;
+    border-radius: 12px !important;
+    max-height: calc(100svh - 24px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .modal-title {
+    font-size: 2rem !important;
+  }
+
+  .modal-description {
+    font-size: 1.3rem;
+    margin-bottom: 14px;
+  }
+
+  #passwordError,
+  #confirmPasswordError,
+  #passwordErrorFaculty,
+  #confirmPasswordErrorFaculty,
+  #passwordErrorAlumni,
+  #confirmPasswordErrorAlumni,
+  #passwordErrorOthers,
+  #confirmPasswordErrorOthers {
+    font-size: 1.2rem;
+  }
+}
+
+/* Phones */
+@media (max-width: 575.98px) {
+  html {
+    font-size: 56%;
+  }
+
+  .google-btn {
+    display: none !important;
+  }
+
+  body {
+    padding-top: 80px;
+  }
+
+  .header {
+    padding: 0.75rem 0.65rem;
+    min-height: 64px;
+  }
+
+  .logo-container {
+    gap: 6px;
+  }
+
+  .logo-container img {
+    width: 40px;
+  }
+
+  .logo-container .bagong_pilipinas {
+    height: 24px !important;
+    margin-right: 4px;
+  }
+
+  .logo-container .arta {
+    width: 58px !important;
+  }
+
+  .logo-container .gov {
+    font-size: 1.1rem !important;
+    max-width: 74px;
+    margin-right: 4px;
+  }
+
+  .header .icon div {
+    margin: 0.2rem;
+    font-size: 2rem;
+  }
+
+  #menu-btn {
+    font-size: 2rem !important;
+  }
+
+  .navbar {
+    width: calc(100vw - 12px) !important;
+    right: 6px !important;
+    top: calc(100% + 6px);
+  }
+
+  .navbar a {
+    font-size: 1.35rem !important;
+    padding: 10px 12px !important;
+  }
+
+  .contact-card {
+    width: calc(100% - 12px) !important;
+    padding: 12px !important;
+    border-radius: 10px;
+  }
+
+  .client-title {
+    font-size: 1.65rem;
+  }
+
+  .client-desc {
+    font-size: 1.15rem;
+  }
+
+  .contact-card form input,
+  .contact-card form textarea,
+  .contact-inputs,
+  select.contact-inputs {
+    font-size: 1.4rem !important;
+    border-radius: 10px !important;
+    padding: 10px 11px !important;
+  }
+
+  .course-year-dropdowns {
+    flex-direction: column;
+  }
+
+  .course-year-dropdowns select {
+    width: 100%;
+  }
+
+  .clientButton,
+  .google-btn,
+  .facebook-btn {
+    font-size: 1.35rem;
+    padding: 10px 11px !important;
+  }
+
+  .modal-box,
+  #privacyModal .modal-box,
+  #clientTypeModal .modal-box,
+  .privacy-modal {
+    max-width: 100% !important;
+    border-radius: 10px !important;
+    padding: 14px !important;
+  }
+
+  #privacyModal .privacy-text,
+  .privacy-modal-body {
+    font-size: 1.25rem;
+    padding: 12px;
+    max-height: 58vh;
+  }
+
+  .modal-title {
+    font-size: 1.75rem !important;
+  }
+
+  .modal-description {
+    font-size: 1.15rem;
+  }
+
+  .helper-note {
+    font-size: 1.1rem;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 360px) {
+  .logo-container .gov {
+    font-size: 0.95rem !important;
+    max-width: 64px;
+  }
+
+  .logo-container .arta {
+    width: 52px !important;
+  }
+
+  .logo-container .bagong_pilipinas {
+    height: 21px !important;
+  }
+
+  .navbar {
+    width: calc(100vw - 10px) !important;
+    right: 5px !important;
+  }
+
+  .client-title {
+    font-size: 1.55rem;
+  }
+
+  .client-desc {
+    font-size: 1.05rem;
+  }
+}

@@ -1,0 +1,381 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Roboto:wght@100;300;400;500;700&display=swap');
+
+:root{
+    --main-color: #ffffff;
+    --white: #ffffff;
+    --bg: hsl(0, 0%, 100%);
+    --border: .1rem solid #000;
+}
+
+*{
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+    border: none;
+    text-decoration: none;
+    transition: .2s linear;
+}
+
+html{
+    font-size: 65.5%;
+    overflow-x: hidden;
+    scroll-padding-top: 9rem;
+    scroll-behavior: smooth;
+}
+
+html::-webkit-scrollbar{
+    width: .2rem;
+}
+
+html::-webkit-scrollbar-track{
+    background: transparent;
+}
+
+html::-webkit-scrollbar-thumb{
+    background: #014421;
+    border-radius: .1rem;
+}
+
+body {
+    background-image: url('/assets/qsu_bg.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    position: relative; /* Required for the overlay */
+    z-index: 0;
+}
+
+/* White overlay to lighten background */
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.637); /* Adjust opacity (0.7–0.9 recommended) */
+    z-index: -1;
+}
+
+
+section{
+    padding: 2rem 7%;
+}
+
+.heading{
+    text-align: center;
+    color: #000000;
+    text-transform: uppercase;
+    padding-bottom: 3.5rem;
+    font-size: 4rem;
+}
+
+.heading span{
+    color: #0edd87;
+    text-transform: uppercase;
+}
+
+.btn{
+    margin-top: 1rem;
+    display: inline-block;
+    padding: .9rem 3rem;
+    font-size: 1.7rem;
+    color: #fff;
+    background: #000000;
+    cursor: pointer;
+}
+
+.btn:hover{
+    letter-spacing: .2rem;
+}
+
+.header{
+    background: #014421;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.6rem 6%;
+    border-bottom: var(--bg);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo-text-img{
+    display: inline-flex;
+    margin-right: 10px;
+}
+
+.logo-container img {
+    width: 60px; 
+    height: 40px;
+    margin-top: 7px;
+
+}
+
+.logo-container .gov{
+    font-size: 1.9rem;
+    font-weight: bolder;
+    color: #fff;
+    margin-right: 30px;
+}
+
+.logo-container .arta {
+  width: 90px;
+  height: auto;
+  padding-left: -10px;
+}
+
+.logo-container .bagong_pilipinas {
+  height: 35px;
+  width: auto;
+  margin-right: 30px;
+}
+
+.navbar{
+    margin-left: 280px;
+}
+
+.header .navbar a{
+    margin: 0.3rem;
+    font-size: 1.7rem;
+    color: #fff;
+}
+
+.header .navbar a:hover{
+    color: #0edd87;
+    border-bottom: .1rem solid #0edd87;
+    padding-bottom: .5rem;
+}
+
+.header .icon div{
+    color: #0edd87;
+    cursor: pointer;
+    font-size: 2.5rem;
+    margin: 2rem;
+}
+
+.header .icon div:hover{
+    color: #0edd87;
+}
+
+#menu-btn{
+    display: none;
+}
+
+.navbar .dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.navbar .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgb(1, 60, 43, 0.7);
+    z-index: 1;
+    border-radius: 5px;
+}
+
+.navbar .dropdown-content a {
+    color: #014421;
+    padding: 10px 15px;
+    text-decoration: none;
+    display: block;
+    transition: background 0.3s, color 0.3s;
+}
+
+.navbar .dropdown-content a:hover {
+    background-color: #027238;
+    color: #fff;
+}
+
+.navbar .dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.navbar .dropdown:hover > a {
+    color: #0edd87;
+}
+
+/* Forgot Password Styling */
+.forgot-wrapper {
+    min-height: calc(100vh - 120px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.forgot-card {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+    width: 100%;
+    max-width: 420px;
+    padding: 35px 30px;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    text-align: center;
+}
+
+.forgot-card h2 {
+    margin-bottom: 8px;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.forgot-card .subtitle {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 25px;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.input-group i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #777;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 14px 12px 40px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    outline: none;
+}
+
+.input-group input:focus {
+    border-color: #1c7ed6;
+}
+
+.input-group.password-group input {
+    padding-right: 52px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    color: #777;
+    cursor: pointer;
+    font-size: 1.7rem;
+    padding: 0;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    z-index: 2;
+}
+
+.toggle-password:hover {
+    color: #333;
+}
+
+.submit-btn {
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 25px;
+    border: none;
+    background: #1c7ed6;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.submit-btn:hover {
+    background: #155bb5;
+}
+
+.submit-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.back-login {
+    display: inline-block;
+    margin-top: 18px;
+    font-size: 14px;
+    color: #1c7ed6;
+    text-decoration: none;
+}
+
+.back-login:hover {
+    text-decoration: underline;
+}
+
+.error-text {
+    color: #d63333;
+    font-size: 13px;
+    margin-top: 6px;
+}
+
+.password-requirements {
+    font-size: 1.3rem;
+    color: #555;
+    margin-top: -10px;
+    margin-bottom: 15px;
+    line-height: 1.7;
+}
+
+.password-requirements .req-item {
+    border-radius: 4px;
+    padding: 0 2px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.password-requirements .req-item.met {
+    color: #0b8f57;
+    background-color: rgba(14, 221, 135, 0.18);
+    font-weight: 700;
+}
+
+.forgot-card {
+    position: relative;
+}
+
+.back-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    text-decoration: none;
+    font-size: 14px;
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.back-btn:hover {
+    color: #000;
+}
