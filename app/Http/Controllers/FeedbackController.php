@@ -10,51 +10,51 @@ use Illuminate\Support\Facades\Mail;
 class FeedbackController extends Controller
 {
     public function submit(Request $request)
-    {
-        // Validate the data
-        $validated = $request->validate([
-            'client_type' => 'required|string',
-            'date' => 'required|date',
-            'campus_transacted' => 'nullable|string',
-            'sex_type' => 'nullable|string',
-            'age' => 'nullable|integer',
-            'contact_no' => 'nullable|string|min:11|max:11',
-            'service_availed' => 'nullable|string',
-            'CC1' => 'required|integer',
-            'CC2' => 'required|integer',
-            'CC3' => 'nullable|integer',
-            'sqd_answers' => 'required|array',
-            'comments' => 'nullable|string',
-            'email_address' => 'required|email',
-            'name' => 'nullable|string', // optional name field
-        ]);
+{
+    $validated = $request->validate([
+        'client_type' => 'required|string',
+        'date' => 'required|date',
+        'campus_transacted' => 'nullable|string',
+        'sex_type' => 'nullable|string',
+        'age' => 'nullable|integer',
+        'contact_no' => 'nullable|string|min:11|max:11',
+        'service_availed' => 'nullable|string',
+        'CC1' => 'required|integer',
+        'CC2' => 'required|integer',
+        'CC3' => 'nullable|integer',
+        'sqd_answers' => 'required|array',
+        'comments' => 'nullable|string',
+        'email_address' => 'required|email',
+        'name' => 'nullable|string',
+    ]);
 
-        // Save into database
-        $feedback = Feedback::create([
-            'client_type' => $validated['client_type'],
-            'date' => $validated['date'],
-            'campus_transacted' => $validated['campus_transacted'] ?? null,
-            'sex_type' => $validated['sex_type'] ?? null,
-            'age' => $validated['age'] ?? null,
-            'contact_no' => $validated['contact_no'] ?? null,
-            'service_availed' => $validated['service_availed'] ?? null,
-            'CC1' => $validated['CC1'],
-            'CC2' => $validated['CC2'],
-            'CC3' => $validated['CC3'] ?? null,
-            'sqd_answers' => json_encode($validated['sqd_answers']),
-            'comments' => $validated['comments'] ?? null,
-            'email_address' => $validated['email_address'],
-            'name' => $validated['name'] ?? null,
-        ]);
+    $feedback = Feedback::create([
+        'client_type' => $validated['client_type'],
+        'date' => $validated['date'],
+        'campus_transacted' => $validated['campus_transacted'] ?? null,
+        'sex_type' => $validated['sex_type'] ?? null,
+        'age' => $validated['age'] ?? null,
+        'contact_no' => $validated['contact_no'] ?? null,
+        'service_availed' => $validated['service_availed'] ?? null,
+        'CC1' => $validated['CC1'],
+        'CC2' => $validated['CC2'],
+        'CC3' => $validated['CC3'] ?? null,
+        'sqd_answers' => json_encode($validated['sqd_answers']),
+        'comments' => $validated['comments'] ?? null,
+        'email_address' => $validated['email_address'],
+        'name' => $validated['name'] ?? null,
+    ]);
 
-        // Determine name for email
-        $nameForEmail = $feedback->name ?? $feedback->email_address;
+    $nameForEmail = $feedback->name ?? $feedback->email_address;
 
-        // Send Thank You email
+    try {
         Mail::to($feedback->email_address)->send(new ThankYouMail($nameForEmail));
-
-        return redirect()->back()->with('success', 'Feedback submitted successfully!.');
+    } catch (\Throwable $e) {
+        \Log::error('Feedback thank-you email failed: ' . $e->getMessage());
     }
+
+    return redirect()->back()->with('success', 'Feedback submitted successfully!');
+}
 
     // Show all feedback
     public function index()
