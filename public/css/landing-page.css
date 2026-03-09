@@ -1472,7 +1472,7 @@ section{
     position: fixed;
     right: auto;
     bottom: auto;
-    left: 80px !important;
+    left: 50px !important;
     top: 0;
     transform: translateY(-10px);
     background-color: #027238;
