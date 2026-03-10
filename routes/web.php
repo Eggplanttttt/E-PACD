@@ -634,3 +634,15 @@ Route::middleware(['auth:admin', 'role:audit'])
 
     Route::get('/admin/complaints/solved/export', [ComplaintController::class, 'exportSolvedExcel'])
     ->name('admin.complaints.solved.export');
+
+
+
+
+Route::get('/mail-test', function () {
+    Mail::raw('E-PACD test email working', function ($message) {
+        $message->to('YOUR_EMAIL@gmail.com')
+                ->subject('E-PACD Mail Test');
+    });
+
+    return 'Mail sent!';
+});
