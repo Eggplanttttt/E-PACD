@@ -40,13 +40,15 @@ use Illuminate\Support\Facades\Mail;
 |--------------------------------------------------------------------------
 | Public Routes
 |--------------------------------------------------------------------------
-*/Route::get('/', function () {
-    return 'HOME OK';
-})->name('home');
+*/
 
-Route::get('/health-test', function () {
-    return 'HEALTH OK';
-});
+// Route::get('/', function () {
+//     return 'HOME OK';
+// })->name('home');
+
+// Route::get('/health-test', function () {
+//     return 'HEALTH OK';
+// });
 // use Illuminate\Support\Facades\Auth;
 
 // Route::get('/', function () {
@@ -61,7 +63,7 @@ Route::get('/health-test', function () {
 //         ->header('Expires', '0');
 // })->name('home');
 
-// Route::get('/', fn() => view('landing-page'))->name('home');
+Route::get('/', fn() => view('landing-page'))->name('home');
 
 Route::get('/citizen-charter', fn() => view('citizen_charter'))->name('citizen.charter');
 Route::get('/complaints', fn() => view('complaint_page'))->name('complaint.page');
