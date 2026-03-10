@@ -40,21 +40,23 @@ use Illuminate\Support\Facades\Mail;
 |--------------------------------------------------------------------------
 | Public Routes
 |--------------------------------------------------------------------------
-*/
-
-use Illuminate\Support\Facades\Auth;
-
-Route::get('/', function () {
-    if (Auth::guard('admin')->check()) {
-        return redirect()->route('admin.dashboard');
-    }
-
-    return response()
-        ->view('landing-page')
-        ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
-        ->header('Pragma', 'no-cache')
-        ->header('Expires', '0');
+*/Route::get('/', function () {
+    return 'HOME OK';
 })->name('home');
+
+// use Illuminate\Support\Facades\Auth;
+
+// Route::get('/', function () {
+//     if (Auth::guard('admin')->check()) {
+//         return redirect()->route('admin.dashboard');
+//     }
+
+//     return response()
+//         ->view('landing-page')
+//         ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+//         ->header('Pragma', 'no-cache')
+//         ->header('Expires', '0');
+// })->name('home');
 
 // Route::get('/', fn() => view('landing-page'))->name('home');
 
