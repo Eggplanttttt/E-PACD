@@ -41,10 +41,8 @@ use Illuminate\Support\Facades\Mail;
 | Public Routes
 |--------------------------------------------------------------------------
 */
-Route::get('/', function () {
-    return 'homepage test ok';
-});
-// Route::get('/', fn() => view('landing-page'))->name('home');
+
+Route::get('/', fn() => view('landing-page'))->name('home');
 
 Route::get('/citizen-charter', fn() => view('citizen_charter'))->name('citizen.charter');
 Route::get('/complaints', fn() => view('complaint_page'))->name('complaint.page');
