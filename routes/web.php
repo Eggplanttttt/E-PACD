@@ -637,7 +637,3 @@ Route::middleware(['auth:admin', 'role:audit'])
 
 
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
