@@ -44,6 +44,9 @@ use Illuminate\Support\Facades\Mail;
     return 'HOME OK';
 })->name('home');
 
+Route::get('/health-test', function () {
+    return 'HEALTH OK';
+});
 // use Illuminate\Support\Facades\Auth;
 
 // Route::get('/', function () {
