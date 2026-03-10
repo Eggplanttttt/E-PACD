@@ -19,6 +19,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::get('/health-test', function () {
-    return response()->json(['ok' => true]);
-});
+// Route::get('/health-test', function () {
+//     return response()->json(['ok' => true]);
+// });
