@@ -42,7 +42,21 @@ use Illuminate\Support\Facades\Mail;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', fn() => view('landing-page'))->name('home');
+use Illuminate\Support\Facades\Auth;
+
+Route::get('/', function () {
+    if (Auth::guard('admin')->check()) {
+        return redirect()->route('admin.dashboard');
+    }
+
+    return response()
+        ->view('landing-page')
+        ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+        ->header('Pragma', 'no-cache')
+        ->header('Expires', '0');
+})->name('home');
+
+// Route::get('/', fn() => view('landing-page'))->name('home');
 
 Route::get('/citizen-charter', fn() => view('citizen_charter'))->name('citizen.charter');
 Route::get('/complaints', fn() => view('complaint_page'))->name('complaint.page');
