@@ -42,40 +42,19 @@ use Illuminate\Support\Facades\Mail;
 |--------------------------------------------------------------------------
 */
 
-// use Illuminate\Session\Middleware\StartSession;
-// use Illuminate\View\Middleware\ShareErrorsFromSession;
-// use Illuminate\Cookie\Middleware\EncryptCookies;
-// use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 
-// Route::get('/health-no-session', function () {
-//     return 'NO SESSION OK';
-// })->withoutMiddleware([
-//     EncryptCookies::class,
-//     AddQueuedCookiesToResponse::class,
-//     StartSession::class,
-//     ShareErrorsFromSession::class,
-// ]);
-
-// Route::get('/', function () {
-//     return 'HOME OK';
-// })->name('home');
-
-// Route::get('/health-test', function () {
-//     return 'HEALTH OK';
-// });
-// use Illuminate\Support\Facades\Auth;
-
-// Route::get('/', function () {
-//     if (Auth::guard('admin')->check()) {
-//         return redirect()->route('admin.dashboard');
-//     }
-
-//     return response()
-//         ->view('landing-page')
-//         ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
-//         ->header('Pragma', 'no-cache')
-//         ->header('Expires', '0');
-// })->name('home');
+Route::get('/health-no-session', function () {
+    return 'NO SESSION OK';
+})->withoutMiddleware([
+    EncryptCookies::class,
+    AddQueuedCookiesToResponse::class,
+    StartSession::class,
+    ShareErrorsFromSession::class,
+]);
 
 Route::get('/', fn() => view('landing-page'))->name('home');
 
