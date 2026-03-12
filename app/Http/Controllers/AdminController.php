@@ -22,6 +22,7 @@ use App\Models\Notification;
 use App\Models\Review;
 use Carbon\Carbon;
 use App\Models\ClientBan;
+use App\Models\ChatRating;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
@@ -565,7 +566,8 @@ class AdminController extends Controller
     public function auditFeedback()
     {
         $feedbacks = Feedback::all();
-        return view('audit.feedback.index', compact('feedbacks'));
+        $chatRatings = ChatRating::latest()->get();
+        return view('audit.feedback.index', compact('feedbacks', 'chatRatings'));
     }
 
 
