@@ -883,6 +883,30 @@ header .dropdown-toggle img {
   border-color: rgba(30,123,85,.45) !important;
 }
 
+.epacd-inq .epacd-attach-btn{
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px !important;
+  border: 1px solid rgba(30,123,85,.24) !important;
+  background: #eef6f1 !important;
+  color: #1e7b55 !important;
+  box-shadow: none !important;
+}
+
+.epacd-inq .epacd-attach-btn:hover{
+  background: #dfeee6 !important;
+  border-color: rgba(30,123,85,.4) !important;
+  color: #155e42 !important;
+}
+
+.epacd-inq #replyAttachmentName{
+  color: #4b5563 !important;
+  font-weight: 600;
+}
+
 /* send button */
 .epacd-inq .epacd-send-btn{
   background: var(--brand) !important;
@@ -1414,6 +1438,22 @@ body.dark-mode .epacd-inq .clients-list .client-link.active .client-name{
 
 body.dark-mode .epacd-inq .chat-header h6{
   color: #dbe3ec !important;
+}
+
+body.dark-mode .epacd-inq .epacd-attach-btn{
+  background: #1b2530 !important;
+  border-color: #35506c !important;
+  color: #dbe3ec !important;
+}
+
+body.dark-mode .epacd-inq .epacd-attach-btn:hover{
+  background: #233140 !important;
+  border-color: #4b6b8d !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .epacd-inq #replyAttachmentName{
+  color: #cbd5e1 !important;
 }
 
 body.dark-mode .epacd-inq #chatMessages .text-muted{
