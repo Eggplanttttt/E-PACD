@@ -142,11 +142,19 @@
                     <input type="hidden" name="client_id" id="clientId">
                     <input type="hidden" name="client_type" id="clientType">
                     <input type="hidden" name="sender" value="admin">
-                    <input type="text" name="message" id="messageInput" class="form-control me-2" placeholder="Type your reply..." required autocomplete="off">
+                    <input type="text" name="message" id="messageInput" class="form-control me-2" placeholder="Type your reply..." autocomplete="off">
+                    <input type="file" id="replyAttachment" name="attachment" class="d-none" accept=".jpg,.jpeg,.png,.gif,.webp,.mp4,.mov,.avi,.wmv,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt">
+                    <button type="button" id="replyAttachmentBtn" class="btn epacd-attach-btn me-2" title="Attach image, video, or document">
+                        <i class="fa-solid fa-paperclip"></i>
+                    </button>
+                    <button type="button" id="replyAttachmentClearBtn" class="btn epacd-attach-btn me-2" title="Remove attachment" style="display:none;">
+                        <i class="fa-solid fa-times"></i>
+                    </button>
                     <button type="submit" class="btn epacd-send-btn">
                         <i class="fa-solid fa-paper-plane me-1"></i> Send
                     </button>
                 </form>
+                <small id="replyAttachmentName" class="px-3 pb-2 text-muted" style="display:none;"></small>
 
                 {{-- Preset Solve Button --}}
                 <div class="p-2 border-top">
@@ -206,8 +214,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     const chatHeader = document.getElementById('clientTypeName');
     const clientsListContainer = document.querySelector('.clients-list .list-group');
     const markSolvedBtn = document.getElementById('markSolvedBtn');
+    const replyAttachment = document.getElementById('replyAttachment');
+    const replyAttachmentBtn = document.getElementById('replyAttachmentBtn');
+    const replyAttachmentClearBtn = document.getElementById('replyAttachmentClearBtn');
+    const replyAttachmentName = document.getElementById('replyAttachmentName');
     const BASE_URL = '/admin/inquiries';
     const CLIENTS_URL = '/clients';
+    const MAX_ATTACHMENT_BYTES = 25 * 1024 * 1024;
+    const ALLOWED_ATTACHMENT_TYPES = [
+        'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+        'video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/x-ms-wmv',
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-powerpoint',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        'text/plain'
+    ];
 
     let searchActive = false;
 
@@ -217,6 +242,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     let autoReplySent = false;       
     const AUTO_REPLY_DELAY = 3000;  
     let displayedMessageIds = new Set();
+
+    function formatAttachment(msg) {
+        if (!msg?.attachment_url) return '';
+
+        if (msg.attachment_type === 'image') {
+            return `<div class="mt-2"><a href="${msg.attachment_url}" target="_blank" rel="noopener noreferrer"><img src="${msg.attachment_url}" alt="${msg.attachment_name || 'Attachment'}" style="max-width:220px; border-radius:10px;"></a></div>`;
+        }
+
+        if (msg.attachment_type === 'video') {
+            return `<div class="mt-2"><video controls style="max-width:220px; border-radius:10px;"><source src="${msg.attachment_url}" type="${msg.attachment_mime || 'video/mp4'}"></video></div>`;
+        }
+
+        return `<div class="mt-2"><a href="${msg.attachment_url}" target="_blank" rel="noopener noreferrer"><i class="fas fa-file me-1"></i>${msg.attachment_name || 'Attachment'}</a></div>`;
+    }
 
     function appendMessage(msg) {
         if (displayedMessageIds.has(msg.id)) return;
@@ -246,7 +285,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         div.innerHTML = `
             <div class="p-2 rounded ${messageClass} ${msg.unread_for_admin ? 'border border-danger' : ''}" style="max-width: 70%;">
                 <small class="d-block fw-bold">${senderName}</small>
-                ${msg.message}
+                ${msg.message || ''}
+                ${formatAttachment(msg)}
                 <div class="text-muted small mt-1">${new Date(createdAt).toLocaleString()}</div>
             </div>
         `;
@@ -341,6 +381,53 @@ document.addEventListener('DOMContentLoaded', async () => {
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
     }
+
+    function updateReplyAttachmentLabel() {
+        const file = replyAttachment.files[0];
+        replyAttachmentName.textContent = file ? `Selected: ${file.name}` : '';
+        replyAttachmentName.style.display = file ? 'block' : 'none';
+        replyAttachmentClearBtn.style.display = file ? 'inline-flex' : 'none';
+    }
+
+    function validateReplyAttachment(file) {
+        if (!file) return true;
+
+        if (file.size > MAX_ATTACHMENT_BYTES) {
+            showModal('The selected file is too large. Maximum allowed size is 25 MB.');
+            replyAttachment.value = '';
+            updateReplyAttachmentLabel();
+            return false;
+        }
+
+        if (file.type && !ALLOWED_ATTACHMENT_TYPES.includes(file.type)) {
+            showModal('Only images, videos, and common document files are allowed.');
+            replyAttachment.value = '';
+            updateReplyAttachmentLabel();
+            return false;
+        }
+
+        return true;
+    }
+
+    function getErrorMessage(data) {
+        if (data?.errors) {
+            const firstError = Object.values(data.errors).flat()[0];
+            if (firstError) return firstError;
+        }
+
+        return data?.error || data?.message || 'Failed to send message.';
+    }
+
+    replyAttachmentBtn?.addEventListener('click', () => replyAttachment.click());
+    replyAttachment?.addEventListener('change', () => {
+        const file = replyAttachment.files[0];
+        if (!validateReplyAttachment(file)) return;
+        updateReplyAttachmentLabel();
+    });
+    replyAttachmentClearBtn?.addEventListener('click', () => {
+        replyAttachment.value = '';
+        updateReplyAttachmentLabel();
+    });
 
     function formatClientLabel(clientType, displayName) {
         return `${clientType.charAt(0).toUpperCase()}${clientType.slice(1)} / ${displayName}`;
@@ -492,19 +579,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': csrfToken,
-                    'X-Requested-With': 'XMLHttpRequest'
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
                 },
                 body: formData
             });
             const data = await res.json();
-            if (data.success) {
+            if (res.ok && data.success) {
                 appendMessage(data.message);
                 messageInput.value = '';
+                replyAttachment.value = '';
+                updateReplyAttachmentLabel();
                 activeClientLink.querySelector('.unread-badge')?.remove();
                 activeClientLink.querySelector('.client-name').classList.remove('fw-bold');
                 markAsRead(clientTypeInput.value, clientIdInput.value);
                 fetchUnreadCounts();
-            } else showModal('Failed to send message.');
+            } else showModal(getErrorMessage(data));
         } catch (err) {
             console.error('Error sending message:', err);
             showModal('Error sending message.');
