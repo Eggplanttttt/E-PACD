@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Http\Controllers\Concerns;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+
+trait HandlesChatAttachments
+{
+    protected function chatAttachmentRules(): array
+    {
+        return [
+            'attachment' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp,mp4,mov,avi,wmv,pdf,doc,docx,xls,xlsx,ppt,pptx,txt|max:25600',
+        ];
+    }
+
+    protected function chatAttachmentMessages(): array
+    {
+        return [
+            'attachment.file' => 'The selected attachment is invalid.',
+            'attachment.mimes' => 'Only images, videos, and common document files are allowed.',
+            'attachment.max' => 'The selected file is too large. Maximum allowed size is 25 MB.',
+        ];
+    }
+
+    protected function storeChatAttachment(Request $request): array
+    {
+        /** @var UploadedFile|null $file */
+        $file = $request->file('attachment');
+
+        if (!$file) {
+            return [];
+        }
+
+        $directory = public_path('chat-attachments');
+        if (!is_dir($directory)) {
+            mkdir($directory, 0775, true);
+        }
+
+        $extension = $file->getClientOriginalExtension();
+        $mime = $file->getClientMimeType() ?: 'application/octet-stream';
+        $filename = uniqid('chat_', true) . ($extension ? '.' . $extension : '');
+        $file->move($directory, $filename);
+
+        return [
+            'attachment_path' => 'chat-attachments/' . $filename,
+            'attachment_name' => $file->getClientOriginalName(),
+            'attachment_mime' => $mime,
+            'attachment_type' => $this->resolveAttachmentType($mime),
+        ];
+    }
+
+    protected function resolveAttachmentType(string $mime): string
+    {
+        if (str_starts_with($mime, 'image/')) {
+            return 'image';
+        }
+
+        if (str_starts_with($mime, 'video/')) {
+            return 'video';
+        }
+
+        return 'document';
+    }
+}
