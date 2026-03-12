@@ -52,7 +52,7 @@
                 <option value="student">Student</option>
                 <option value="faculty">Faculty / Staff</option>
                 <option value="alumni">Alumni</option>
-                <option value="others">Guest</option>
+                <option value="others">Others</option>
                 <option value="register">New Account</option>
             </select>
             <i class="fa-solid fa-angle-down dropdown-arrow"></i>
@@ -247,7 +247,7 @@
     <form id="othersLoginForm" class="contact-left hidden" method="POST" action="{{ route('client.login.post', ['clientType' => 'others']) }}">
         @csrf
         <div class="contact-left-title">
-            <h2>Guest Login</h2>
+            <h2>General Login</h2>
             <a type="button" class="back-btn" onclick="goBackToClientType()">
                 <i class="fa-solid fa-arrow-left"></i>
             </a>
@@ -294,7 +294,7 @@
                 <option value="student">Student</option>
                 <option value="faculty">Faculty / Staff</option>
                 <option value="alumni">Alumni</option>
-                <option value="others">Guest</option>
+                <option value="others">Others</option>
             </select>
              <i class="fa-solid fa-angle-down dropdown-arrow" style="right:125px"></i>
              </div>
@@ -782,7 +782,7 @@
             <input type="email" name="email" id="alumniEmail" placeholder="Enter your Libris" autocomplete="off" required>
             <div class="helper-note">
                 <i class="fa-solid fa-circle-info"></i>
-                Tip: Use your <strong>real name</strong> that appears in your email to avoid registration errors.
+                Tip: Use your <strong>real name</strong> that appears in your email to avoid registration errors. If you do not have a Libris account, please register as <strong>Guest</strong>.
             </div>
             <button type="button" 
                     id="sendOtpBtnAlumni" 
@@ -992,7 +992,7 @@
     @csrf
 
     <div class="form-header">
-        <h2>Guest Registration</h2>
+        <h2>Visitors Registration</h2>
         <a type="button" class="back-btn" onclick="goBackToClientType()">
             <i class="fa-solid fa-arrow-left"></i>
         </a>
@@ -1002,12 +1002,6 @@
         $fbVerified = session('fb_verified_others', false);
         $fbName  = session('fb_name', '');
         $fbEmail = session('fb_email', '');
-
-        // Split name: First = first token, Last = last token, Middle = everything between (optional)
-        $parts = $fbName ? preg_split('/\s+/', trim($fbName)) : [];
-        $fbFirst = $parts[0] ?? '';
-        $fbLast  = count($parts) > 1 ? $parts[count($parts)-1] : '';
-        $fbMiddle = count($parts) > 2 ? implode(' ', array_slice($parts, 1, -1)) : '';
     @endphp
 
     {{-- Show validation errors nicely --}}
@@ -1024,7 +1018,7 @@
     <!-- Step 1: Facebook Verification -->
     <div id="othersFacebookVerification" style="{{ $fbVerified ? 'display:none;' : 'display:block;' }}">
         <p style="margin: 0 0 10px;">
-            Continue using Facebook to verify your account. After confirming, you can always log in with Facebook.
+            Continue using Facebook to verify your account. After confirming, your Facebook name and email will be used for registration.
         </p>
 
         <a href="{{ route('facebook.redirect', ['clientType' => 'others']) }}"
@@ -1039,6 +1033,10 @@
          style="{{ $fbVerified ? 'display:block;' : 'display:none;' }}; margin-top:20px;">
 
          <input type="hidden" id="emailVerifiedOthers" name="emailVerifiedOthers" value="1">
+        <p style="margin-bottom: 12px;">
+            Your Facebook account already provided your name and email. Set your password now. The rest of your details can be completed later in your dashboard.
+        </p>
+
         <!-- Email from Facebook (show + ALWAYS send hidden) -->
         <div class="input-box">
             <input type="email"
@@ -1049,52 +1047,12 @@
             <input type="hidden" name="email" value="{{ old('email', $fbEmail) }}">
         </div>
 
-        <div class="name-fields">
-            <input type="text"
-                   name="first_name"
-                   placeholder="First Name *"
-                   required
-                   autocomplete="off"
-                   spellcheck="false"
-                   value="{{ old('first_name', $fbFirst) }}"
-                   oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '');">
-
-            <input type="text"
-                   name="middle_initial"
-                   placeholder="Middle Name / Initial (Optional)"
-                   autocomplete="off"
-                   spellcheck="false"
-                   maxlength="20"
-                   value="{{ old('middle_initial', $fbMiddle) }}"
-                   oninput="this.value = this.value.replace(/[^a-zA-Z.\s]/g, '');">
-
-            <input type="text"
-                   name="last_name"
-                   placeholder="Last Name *"
-                   required
-                   autocomplete="off"
-                   spellcheck="false"
-                   value="{{ old('last_name', $fbLast) }}"
-                   oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '');">
-
-            <input type="text"
-                   name="suffix"
-                   placeholder="Suffix (leave blank if none)"
-                   autocomplete="off"
-                   spellcheck="false"
-                   maxlength="10"
-                   value="{{ old('suffix') }}"
-                   oninput="this.value = this.value.replace(/[^a-zA-Z.,\s]/g, '');">
-        </div>
-
         <div class="input-box">
             <input type="text"
-                   name="address"
-                   placeholder="Address *"
-                   required
-                   autocomplete="off"
-                   spellcheck="false"
-                   value="{{ old('address') }}">
+                   value="{{ $fbName }}"
+                   readonly
+                   placeholder="Name (from Facebook)"
+                   class="contact-inputs">
         </div>
 
         <!-- Set Password -->
@@ -1213,7 +1171,7 @@
                 </div>
             </div>
 
-        <button type="submit" id="registerBtnOthers">Finish Registration</button>
+        <button type="submit" id="registerBtnOthers">Create Account</button>
     </div>
 </form>
 
@@ -2515,74 +2473,101 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    document.addEventListener('DOMContentLoaded', () => {
-    const params = new URLSearchParams(window.location.search);
     const open = params.get('open');
     const clientType = params.get('clientType');
-
     const shouldOpenOthersStep2 = (open === 'others-register' && clientType === 'others');
 
-    if (!shouldOpenOthersStep2) return;
+    if (shouldOpenOthersStep2) {
+        const modal = document.getElementById('clientTypeModal');
+        if (modal) modal.style.display = 'none';
 
-    // hide client type modal
-    const modal = document.getElementById('clientTypeModal');
-    if (modal) modal.style.display = 'none';
+        const loginForms = document.getElementById('loginForms');
+        if (loginForms) loginForms.classList.remove('hidden');
 
-    // show container/card
-    const loginForms = document.getElementById('loginForms');
-    if (loginForms) loginForms.classList.remove('hidden');
+        const selector = document.getElementById('clientTypeSelector');
+        if (selector) {
+            selector.value = 'others';
+            selector.dispatchEvent(new Event('change'));
+        }
 
-    // select Others in dropdown
-    const selector = document.getElementById('clientTypeSelector');
-    if (selector) {
-        selector.value = 'others';
-        selector.dispatchEvent(new Event('change'));
+        const formOthers = document.getElementById('form-others');
+        const step1 = document.getElementById('othersFacebookVerification');
+        const step2 = document.getElementById('registrationFieldsOthers');
+
+        if (formOthers) formOthers.classList.remove('hidden');
+        if (step1) step1.style.display = 'none';
+        if (step2) {
+            step2.style.display = 'block';
+            step2.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        window.history.replaceState({}, document.title, window.location.pathname);
     }
 
-    // show the others form
-    const formOthers = document.getElementById('form-others');
-    if (formOthers) formOthers.classList.remove('hidden');
+    const othersForm = document.getElementById('form-others');
+    const registerBtnOthers = document.getElementById('registerBtnOthers');
+    const agreePrivacyOthers = document.getElementById('agreePrivacyOthers');
+    const emailVerifiedOthers = document.getElementById('emailVerifiedOthers');
+    const othersPassword = document.getElementById('othersPassword');
+    const othersPasswordConfirm = document.getElementById('othersPasswordConfirm');
+    const passwordErrorOthers = document.getElementById('passwordErrorOthers');
+    const confirmPasswordErrorOthers = document.getElementById('confirmPasswordErrorOthers');
 
-    // FORCE Step 2 (registration fields)
-    const step1 = document.getElementById('othersFacebookVerification');
-    const step2 = document.getElementById('registrationFieldsOthers');
+    const strongPassword = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 
-    if (step1) step1.style.display = 'none';
-    if (step2) step2.style.display = 'block';
+    function validateOthersPassword() {
+        if (!othersPassword || !passwordErrorOthers) return true;
 
-    step2?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (!strongPassword.test(othersPassword.value)) {
+            passwordErrorOthers.textContent = "Password must contain at least 1 uppercase, 1 lowercase, 1 number, and 1 special character (8+ characters).";
+            passwordErrorOthers.style.display = 'block';
+            return false;
+        }
 
-    // clean URL
-    window.history.replaceState({}, document.title, window.location.pathname);
-});
+        passwordErrorOthers.style.display = 'none';
+        return true;
+    }
 
+    function validateOthersConfirmPassword() {
+        if (!othersPassword || !othersPasswordConfirm || !confirmPasswordErrorOthers) return true;
 
+        if (othersPassword.value !== othersPasswordConfirm.value) {
+            confirmPasswordErrorOthers.textContent = "Passwords do not match.";
+            confirmPasswordErrorOthers.style.display = 'block';
+            return false;
+        }
 
-    // ---------- FORM SUBMISSION ----------
-    registerBtn.disabled = false;
-    agreePrivacy.addEventListener('change', () => registerBtn.disabled = false);
+        confirmPasswordErrorOthers.style.display = 'none';
+        return true;
+    }
 
-    form.addEventListener('submit', e => {
-        if (emailVerifiedInput.value !== "1") {
+    othersPassword?.addEventListener('input', () => {
+        validateOthersPassword();
+        if (othersPasswordConfirm?.value) validateOthersConfirmPassword();
+    });
+
+    othersPasswordConfirm?.addEventListener('input', validateOthersConfirmPassword);
+
+    if (registerBtnOthers) {
+        registerBtnOthers.disabled = false;
+    }
+
+    agreePrivacyOthers?.addEventListener('change', () => {
+        if (registerBtnOthers) registerBtnOthers.disabled = false;
+    });
+
+    othersForm?.addEventListener('submit', (e) => {
+        if (emailVerifiedOthers && emailVerifiedOthers.value !== "1") {
             e.preventDefault();
             showModal("Please verify your email before registering.");
             return;
         }
 
-        if (!validatePassword() || !validateConfirmPassword() || !agreePrivacy.checked || !validateNameMatchesEmail()) {
+        if (!validateOthersPassword() || !validateOthersConfirmPassword() || !agreePrivacyOthers?.checked) {
             e.preventDefault();
-            if (!agreePrivacy.checked) showModal("You must agree to the Data Privacy Policy.");
-            return;
+            if (!agreePrivacyOthers?.checked) showModal("You must agree to the Data Privacy Policy.");
         }
     });
-
-    // ---------- PRIVACY MODAL ----------
-    privacyLink.addEventListener('click', e => {
-        e.preventDefault();
-        privacyModal.style.display = 'flex';
-    });
-
-    closeModal.addEventListener('click', () => privacyModal.style.display = 'none');
 });
 
 </script>
