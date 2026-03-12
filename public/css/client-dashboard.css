@@ -1075,6 +1075,52 @@ form .btn:hover {
   color: #111827;
 }
 
+.logout-rating-modal {
+  max-width: 420px;
+}
+
+.logout-rating-modal h4 {
+  margin: 0 0 10px;
+  color: rgb(1, 60, 43);
+  font-weight: 700;
+}
+
+.logout-rating-stars {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 18px 0 12px;
+}
+
+.logout-rating-star {
+  border: none;
+  background: transparent;
+  color: #cbd5e1;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform .15s ease, color .15s ease;
+}
+
+.logout-rating-star:hover,
+.logout-rating-star.active {
+  color: #f59e0b;
+  transform: scale(1.08);
+}
+
+.logout-rating-help {
+  display: block;
+  color: #64748b;
+  margin: 0 0 16px;
+}
+
+.logout-rating-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 /* =========================
    Mobile UX Overrides
    (final layer for all client dashboards)
