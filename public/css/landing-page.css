@@ -1556,7 +1556,7 @@ section{
 .tooltip-arrow {
     position: absolute;
     bottom: -6px;
-    right: 50px;
+    right: 80px;
     left: auto;
     transform: none;
     width: 0; 
