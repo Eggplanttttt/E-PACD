@@ -1487,7 +1487,7 @@ section{
     position: fixed;
     right: auto;
     bottom: auto;
-    left: 50px !important;
+    left: 80px !important;
     top: 0;
     transform: translateY(-10px);
     background-color: #027238;
@@ -1504,8 +1504,42 @@ section{
     max-width: min(260px, calc(100vw - 24px));
     white-space: normal;
     text-align: center;
-    padding-right: -30px !important;
     margin-top: -400px !important;
+}
+
+/* Large desktop */
+@media (min-width: 1500px) {
+    .assistance-tooltip {
+        margin-top: -440px !important;
+    }
+}
+
+/* Large desktop */
+@media (min-width: 1600px) {
+    .assistance-tooltip {
+        margin-top: -480px !important;
+    }
+}
+
+/* Full HD wide monitors */
+@media (min-width: 1820px) {
+    .assistance-tooltip {
+        margin-top: -510px !important;
+    }
+}
+
+/* 2K monitors */
+@media (min-width: 2560px) {
+    .assistance-tooltip {
+        margin-top: -550px !important;
+    }
+}
+
+/* 4K UHD */
+@media (min-width: 3840px) {
+    .assistance-tooltip {
+        margin-top: -620px !important;
+    }
 }
 
 .assistance-tooltip.show {
