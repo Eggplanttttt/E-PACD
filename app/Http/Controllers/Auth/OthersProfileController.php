@@ -8,6 +8,7 @@ use App\Models\Faculty;
 use App\Models\Other;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class OthersProfileController extends Controller
@@ -22,13 +23,8 @@ class OthersProfileController extends Controller
 
         // Validate form fields
         $request->validate([
-            'first_name'      => ['required', 'string', 'max:255'],
-            'middle_initial'  => ['nullable', 'string', 'max:20'],
-            'last_name'       => ['required', 'string', 'max:255'],
-            'suffix'          => ['nullable', 'string', 'max:10'],
-            'address'         => ['required', 'string', 'max:255'],
             'password'        => ['required', 'string', 'min:8', 'confirmed'],
-            'email'           => ['required', 'email'], // hidden email input
+            'email'           => ['required', 'email'],
         ]);
 
         // Source of truth for FB identity
@@ -59,15 +55,15 @@ class OthersProfileController extends Controller
                 ->withInput();
         }
 
-        $other = new Other();
+        $nameParts = $this->splitFacebookName(session('fb_name'), $email);
 
-        // Fill profile fields
+        $other = new Other();
         $other->email          = $email;
-        $other->first_name     = $request->first_name;
-        $other->middle_initial = $request->middle_initial;
-        $other->last_name      = $request->last_name;
-        $other->suffix         = $request->suffix;
-        $other->address        = $request->address;
+        $other->first_name     = $nameParts['first_name'];
+        $other->middle_initial = $nameParts['middle_initial'];
+        $other->last_name      = $nameParts['last_name'];
+        $other->suffix         = $nameParts['suffix'];
+        $other->address        = '';
 
         // Required fields in your DB
         $other->client_type = 'others';
@@ -80,10 +76,42 @@ class OthersProfileController extends Controller
 
         $other->save();
 
+        Auth::guard('others')->login($other);
+        session([
+            'client_type' => 'others',
+            'client_id' => $other->id,
+        ]);
+
         // Clear FB session flags
         session()->forget(['fb_verified_others', 'fb_email', 'fb_name', 'fb_id', 'fb_avatar']);
 
-        return redirect('/inquiries?skipModal=1')
+        return redirect()->route('client.dashboard.others')
             ->with('success', 'Registration completed successfully!');
+    }
+
+    protected function splitFacebookName(?string $name, string $email): array
+    {
+        $name = trim((string) $name);
+
+        if ($name !== '') {
+            $parts = preg_split('/\s+/', $name) ?: [];
+
+            return [
+                'first_name' => $parts[0] ?? 'Facebook',
+                'middle_initial' => count($parts) > 2 ? implode(' ', array_slice($parts, 1, -1)) : null,
+                'last_name' => count($parts) > 1 ? $parts[count($parts) - 1] : 'User',
+                'suffix' => null,
+            ];
+        }
+
+        $emailPrefix = (string) strtok($email, '@');
+        $fallbackName = trim(ucwords(str_replace(['.', '_', '-'], ' ', $emailPrefix)));
+
+        return [
+            'first_name' => $fallbackName !== '' ? $fallbackName : 'Facebook',
+            'middle_initial' => null,
+            'last_name' => 'User',
+            'suffix' => null,
+        ];
     }
 }
