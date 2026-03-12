@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\ThankYouMail;
+use App\Models\ChatRating;
 use App\Models\Feedback;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -10,55 +11,56 @@ use Illuminate\Support\Facades\Mail;
 class FeedbackController extends Controller
 {
     public function submit(Request $request)
-{
-    $validated = $request->validate([
-        'client_type' => 'required|string',
-        'date' => 'required|date',
-        'campus_transacted' => 'nullable|string',
-        'sex_type' => 'nullable|string',
-        'age' => 'nullable|integer',
-        'contact_no' => 'nullable|string|min:11|max:11',
-        'service_availed' => 'nullable|string',
-        'CC1' => 'required|integer',
-        'CC2' => 'required|integer',
-        'CC3' => 'nullable|integer',
-        'sqd_answers' => 'required|array',
-        'comments' => 'nullable|string',
-        'email_address' => 'required|email',
-        'name' => 'nullable|string',
-    ]);
+    {
+        // Validate the data
+        $validated = $request->validate([
+            'client_type' => 'required|string',
+            'date' => 'required|date',
+            'campus_transacted' => 'nullable|string',
+            'sex_type' => 'nullable|string',
+            'age' => 'nullable|integer',
+            'contact_no' => 'nullable|string|min:11|max:11',
+            'service_availed' => 'nullable|string',
+            'CC1' => 'required|integer',
+            'CC2' => 'required|integer',
+            'CC3' => 'nullable|integer',
+            'sqd_answers' => 'required|array',
+            'comments' => 'nullable|string',
+            'email_address' => 'required|email',
+            'name' => 'nullable|string', // optional name field
+        ]);
 
-    $feedback = Feedback::create([
-        'client_type' => $validated['client_type'],
-        'date' => $validated['date'],
-        'campus_transacted' => $validated['campus_transacted'] ?? null,
-        'sex_type' => $validated['sex_type'] ?? null,
-        'age' => $validated['age'] ?? null,
-        'contact_no' => $validated['contact_no'] ?? null,
-        'service_availed' => $validated['service_availed'] ?? null,
-        'CC1' => $validated['CC1'],
-        'CC2' => $validated['CC2'],
-        'CC3' => $validated['CC3'] ?? null,
-        'sqd_answers' => json_encode($validated['sqd_answers']),
-        'comments' => $validated['comments'] ?? null,
-        'email_address' => $validated['email_address'],
-        'name' => $validated['name'] ?? null,
-    ]);
+        // Save into database
+        $feedback = Feedback::create([
+            'client_type' => $validated['client_type'],
+            'date' => $validated['date'],
+            'campus_transacted' => $validated['campus_transacted'] ?? null,
+            'sex_type' => $validated['sex_type'] ?? null,
+            'age' => $validated['age'] ?? null,
+            'contact_no' => $validated['contact_no'] ?? null,
+            'service_availed' => $validated['service_availed'] ?? null,
+            'CC1' => $validated['CC1'],
+            'CC2' => $validated['CC2'],
+            'CC3' => $validated['CC3'] ?? null,
+            'sqd_answers' => json_encode($validated['sqd_answers']),
+            'comments' => $validated['comments'] ?? null,
+            'email_address' => $validated['email_address'],
+            'name' => $validated['name'] ?? null,
+        ]);
 
-    $nameForEmail = $feedback->name ?? $feedback->email_address;
+        // Determine name for email
+        $nameForEmail = $feedback->name ?? $feedback->email_address;
 
-    try {
+        // Send Thank You email
         Mail::to($feedback->email_address)->send(new ThankYouMail($nameForEmail));
-    } catch (\Throwable $e) {
-        \Log::error('Feedback thank-you email failed: ' . $e->getMessage());
-    }
 
-    return redirect()->back()->with('success', 'Feedback submitted successfully!');
-}
+        return redirect()->back()->with('success', 'Feedback submitted successfully!.');
+    }
 
     // Show all feedback
     public function index()
     {
+        $chatRatings = ChatRating::latest()->get();
         $feedbacks = Feedback::all()->map(function ($feedback) {
             $answers = json_decode($feedback->sqd_answers, true);
             if (is_array($answers) && count($answers) > 0) {
@@ -81,7 +83,7 @@ class FeedbackController extends Controller
             ->filter()
             ->toArray();
 
-        return view('admin.feedback.index', compact('feedbacks', 'feedbackGroups'));
+        return view('admin.feedback.index', compact('feedbacks', 'feedbackGroups', 'chatRatings'));
     }
 
     public function exportExcel(Request $request)
