@@ -112,6 +112,42 @@
     <div class="page-card">
         <div class="card-head">
             <div class="card-head-left">
+                <h3>Chat Ratings</h3>
+                <small>Quick 5-star ratings submitted during client logout</small>
+            </div>
+        </div>
+
+        <div class="table-wrap mb-4">
+            <table class="table table-hover align-middle w-100">
+                <thead>
+                    <tr>
+                        <th>Client Type</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Stars</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($chatRatings as $rating)
+                        <tr>
+                            <td><div class="cell-strong">{{ $rating->client_type }}</div></td>
+                            <td>{{ $rating->client_name ?? 'N/A' }}</td>
+                            <td>{{ $rating->client_email ?? 'N/A' }}</td>
+                            <td><span class="pill">{{ str_repeat('★', (int) $rating->stars) }}</span></td>
+                            <td>{{ $rating->created_at?->format('Y-m-d h:i A') ?? 'N/A' }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">No chat ratings yet.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card-head">
+            <div class="card-head-left">
                 <h3>Feedback Summary</h3>
                 <small>Client Type • Date • Average Rate</small>
             </div>
