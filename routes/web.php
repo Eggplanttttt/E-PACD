@@ -42,8 +42,6 @@ use Illuminate\Support\Facades\Mail;
 |--------------------------------------------------------------------------
 */
 
-
-
 Route::get('/', fn() => view('landing-page'))->name('home');
 
 Route::get('/citizen-charter', fn() => view('citizen_charter'))->name('citizen.charter');
@@ -268,6 +266,8 @@ Route::middleware(['auth:alumni'])->prefix('alumni')->group(function () {
 
 Route::middleware(['auth:others'])->prefix('others')->group(function () {
     Route::get('/settings', [OthersSettingsController::class, 'index'])->name('others.settings');
+    Route::put('/profile', [OthersSettingsController::class, 'updateProfile'])
+         ->name('others.profile.update');
     Route::put('/settings/update-password', [OthersSettingsController::class, 'updatePassword'])
          ->name('others.settings.updatePassword');
 });
@@ -636,6 +636,3 @@ Route::middleware(['auth:admin', 'role:audit'])
 
     Route::get('/admin/complaints/solved/export', [ComplaintController::class, 'exportSolvedExcel'])
     ->name('admin.complaints.solved.export');
-
-
-
