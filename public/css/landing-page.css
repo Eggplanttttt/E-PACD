@@ -1487,11 +1487,7 @@ section{
     position: fixed;
     right: auto;
     bottom: auto;
-<<<<<<< HEAD
     left: 80px !important;
-=======
-    left: 70px !important;
->>>>>>> f3c5d95 (Create storage link)
     top: 0;
     transform: translateY(-10px);
     background-color: #027238;
@@ -1508,10 +1504,6 @@ section{
     max-width: min(260px, calc(100vw - 24px));
     white-space: normal;
     text-align: center;
-<<<<<<< HEAD
-=======
-    padding-right: -50px !important;
->>>>>>> f3c5d95 (Create storage link)
     margin-top: -400px !important;
 }
 
@@ -1564,7 +1556,7 @@ section{
 .tooltip-arrow {
     position: absolute;
     bottom: -6px;
-    right: 80px;
+    right: 20px;
     left: auto;
     transform: none;
     width: 0; 
