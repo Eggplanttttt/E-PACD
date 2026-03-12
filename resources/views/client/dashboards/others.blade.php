@@ -332,7 +332,7 @@
 
 
         <h2>Welcome, {{ $fullName }}!</h2>
-        <p>You're now connected to E-PACD Chat Support (Others)</p>
+        <p>You're now connected to E-PACD Chat Support (Guest)</p>
     </header>
 
     <!-- MOBILE FAQ (TOP, MOBILE ONLY) -->
