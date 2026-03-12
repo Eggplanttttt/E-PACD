@@ -27,6 +27,7 @@ use App\Http\Controllers\OthersPasswordController;
 use App\Http\Controllers\Auth\OthersProfileController;
 use App\Http\Controllers\OthersComplaintController;
 use App\Http\Controllers\OthersNotificationController;
+use App\Http\Controllers\ChatRatingController;
 use App\Http\Controllers\StudentNotificationController;
 use App\Http\Controllers\StudentComplaintController;
 use App\Http\Controllers\FacultyNotificationController;
@@ -69,6 +70,9 @@ Route::prefix('login')->group(function () {
 
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+Route::middleware(['auth:student,faculty,alumni,others'])
+    ->post('/client/chat-ratings', [ChatRatingController::class, 'store'])
+    ->name('client.chatRatings.store');
 
 Route::get('/register/select', fn() => view('registers.select'))->name('register.select');
 
