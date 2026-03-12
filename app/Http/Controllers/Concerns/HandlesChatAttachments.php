@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Concerns;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 trait HandlesChatAttachments
 {
@@ -32,21 +33,31 @@ trait HandlesChatAttachments
             return [];
         }
 
-        $directory = public_path('chat-attachments');
-        if (!is_dir($directory)) {
-            mkdir($directory, 0775, true);
-        }
-
-        $extension = $file->getClientOriginalExtension();
         $mime = $file->getClientMimeType() ?: 'application/octet-stream';
-        $filename = uniqid('chat_', true) . ($extension ? '.' . $extension : '');
-        $file->move($directory, $filename);
+        $attachmentType = $this->resolveAttachmentType($mime);
+
+        $resourceType = match ($attachmentType) {
+            'image' => 'image',
+            'video' => 'video',
+            default => 'raw',
+        };
+
+        $uploadResult = Cloudinary::uploadApi()->upload(
+            $file->getRealPath(),
+            [
+                'folder' => 'e-pacd/chat-attachments',
+                'resource_type' => $resourceType,
+                'use_filename' => true,
+                'unique_filename' => true,
+                'overwrite' => false,
+            ]
+        );
 
         return [
-            'attachment_path' => 'chat-attachments/' . $filename,
+            'attachment_path' => $uploadResult['secure_url'] ?? null,
             'attachment_name' => $file->getClientOriginalName(),
             'attachment_mime' => $mime,
-            'attachment_type' => $this->resolveAttachmentType($mime),
+            'attachment_type' => $attachmentType,
         ];
     }
 
