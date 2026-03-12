@@ -394,9 +394,13 @@
 
             <form id="chat-form" class="chat-form" autocomplete="off">
                 @csrf
-                <input type="text" id="chat-input" placeholder="Type your message..." required autocomplete="off" spellcheck="false">
+                <input type="text" id="chat-input" placeholder="Type your message..." autocomplete="off" spellcheck="false">
+                <input type="file" id="chat-attachment" name="attachment" class="d-none" accept=".jpg,.jpeg,.png,.gif,.webp,.mp4,.mov,.avi,.wmv,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt">
+                <button type="button" id="attachment-btn" title="Attach image, video, or document"><i class="fas fa-paperclip"></i></button>
+                <button type="button" id="clear-attachment-btn" title="Remove attachment" style="display:none;"><i class="fas fa-times"></i></button>
                 <button type="submit"><i class="fas fa-paper-plane"></i></button>
             </form>
+            <small id="attachment-name" class="text-muted d-block mt-2"></small>
         </div>
 
         {{-- FAQ Sidebar --}}
@@ -532,8 +536,53 @@ document.addEventListener('DOMContentLoaded', () => {
     const faqMobilePlaceholder = document.getElementById('faq-mobile-placeholder');
     const csrfToken = document.querySelector('input[name="_token"]').value;
     const studentName = @json($fullName);
+    const attachmentInput = document.getElementById('chat-attachment');
+    const attachmentBtn = document.getElementById('attachment-btn');
+    const clearAttachmentBtn = document.getElementById('clear-attachment-btn');
+    const attachmentName = document.getElementById('attachment-name');
+    const customModal = document.getElementById('customModal');
+    const customModalMessage = document.getElementById('customModalMessage');
+    const customClose = document.querySelector('.custom-close');
+    const MAX_ATTACHMENT_BYTES = 25 * 1024 * 1024;
+    const ALLOWED_ATTACHMENT_TYPES = [
+        'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+        'video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/x-ms-wmv',
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-powerpoint',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        'text/plain'
+    ];
 
     let searchActive = false;
+
+    function showStatusModal(message) {
+        if (!customModal || !customModalMessage) return alert(message);
+        customModalMessage.textContent = message;
+        customModal.style.display = 'flex';
+    }
+
+    customClose?.addEventListener('click', () => {
+        customModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target === customModal) {
+            customModal.style.display = 'none';
+        }
+    });
+
+    function getErrorMessage(result) {
+        if (result?.errors) {
+            const firstError = Object.values(result.errors).flat()[0];
+            if (firstError) return firstError;
+        }
+
+        return result?.error || result?.message || 'Failed to send message.';
+    }
 
 
     // chatSearch.addEventListener('keyup', () => {
@@ -565,7 +614,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /*AUTO SCROLL*/
     function scrollToBottom(force = false) {
-         if (searchActive) return;
+         if (searchActive || isAnyVideoPlaying()) return;
 
         const threshold = 60;
 
@@ -619,23 +668,94 @@ document.addEventListener('DOMContentLoaded', () => {
 
     bindFaqClicks();
 
-    function appendMessage(sender, message) {
+    function isAnyVideoPlaying() {
+        return Array.from(chatMessages.querySelectorAll('video')).some(video => !video.paused && !video.ended);
+    }
+
+    function formatAttachment(messageObj) {
+        if (!messageObj?.attachment_url) return '';
+
+        const safeUrl = messageObj.attachment_url;
+        const safeName = messageObj.attachment_name || 'Attachment';
+
+        if (messageObj.attachment_type === 'image') {
+            return `<div class="mt-2"><a href="${safeUrl}" target="_blank" rel="noopener noreferrer"><img src="${safeUrl}" alt="${safeName}" style="max-width:220px; border-radius:10px;"></a></div>`;
+        }
+
+        if (messageObj.attachment_type === 'video') {
+            return `<div class="mt-2" style="width:220px; max-width:100%;"><video controls preload="metadata" playsinline style="display:block; width:100%; aspect-ratio:16 / 9; background:#000; object-fit:contain; border-radius:10px;"><source src="${safeUrl}" type="${messageObj.attachment_mime || 'video/mp4'}"></video></div>`;
+        }
+
+        return `<div class="mt-2"><a href="${safeUrl}" target="_blank" rel="noopener noreferrer"><i class="fas fa-file me-1"></i>${safeName}</a></div>`;
+    }
+
+    function appendMessage(messageObj) {
+        const sender = messageObj.sender || '';
+        const message = messageObj.message || '';
         const msg = document.createElement('div');
         msg.classList.add('chat-message');
+        const attachmentHtml = formatAttachment(messageObj);
 
         if (sender.toLowerCase().startsWith('student/')) {
             msg.classList.add('message-user');
-            msg.innerHTML = `<strong>You:</strong> ${message}`;
+            msg.innerHTML = `<strong>You:</strong> ${message}${attachmentHtml}`;
         } else {
             msg.classList.add('message-system');
-            msg.innerHTML = `<strong>${sender}:</strong> ${message}`;
+            msg.innerHTML = `<strong>${sender}:</strong> ${message}${attachmentHtml}`;
         }
 
         chatMessages.appendChild(msg);
     }
 
+    function updateAttachmentLabel() {
+        const file = attachmentInput.files[0];
+        attachmentName.textContent = file ? `Selected: ${file.name}` : '';
+        clearAttachmentBtn.style.display = file ? 'inline-flex' : 'none';
+    }
+
+    function validateAttachmentFile(file) {
+        if (!file) return true;
+
+        if (file.size > MAX_ATTACHMENT_BYTES) {
+            showStatusModal('The selected file is too large. Maximum allowed size is 25 MB.');
+            attachmentInput.value = '';
+            updateAttachmentLabel();
+            return false;
+        }
+
+        if (file.type && !ALLOWED_ATTACHMENT_TYPES.includes(file.type)) {
+            showStatusModal('Only images, videos, and common document files are allowed.');
+            attachmentInput.value = '';
+            updateAttachmentLabel();
+            return false;
+        }
+
+        return true;
+    }
+
+    attachmentBtn.addEventListener('click', () => attachmentInput.click());
+    attachmentInput.addEventListener('change', () => {
+        const file = attachmentInput.files[0];
+        if (!validateAttachmentFile(file)) return;
+        updateAttachmentLabel();
+    });
+    clearAttachmentBtn.addEventListener('click', () => {
+        attachmentInput.value = '';
+        updateAttachmentLabel();
+    });
+
+    chatMessages.addEventListener('play', event => {
+        if (event.target.tagName !== 'VIDEO') return;
+
+        chatMessages.querySelectorAll('video').forEach(video => {
+            if (video !== event.target) video.pause();
+        });
+    }, true);
+
     async function fetchMessages() {
         try {
+            if (isAnyVideoPlaying()) return;
+
             const res = await fetch('/client/get-messages');
             const data = await res.json();
 
@@ -644,16 +764,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight < 80;
 
             chatMessages.innerHTML = '';
-            data.messages.forEach(msg => appendMessage(msg.sender, msg.message));
+            data.messages.forEach(msg => appendMessage(msg));
             if (searchActive) performSearch();
 
 
             // scroll AFTER DOM updates & paint
-            if (isNearBottom && !searchActive) {
+            if (isNearBottom && !searchActive && !isAnyVideoPlaying()) {
                 setTimeout(() => {
-                    if (!searchActive) {
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                }
+                    if (!searchActive && !isAnyVideoPlaying()) {
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }
                 }, 50);
             }
 
@@ -664,31 +784,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     async function sendMessage(message, fromFaq = 0) {
-        if (!message) return;
+        const file = attachmentInput.files[0];
+        if (!message && !file) return;
 
-        appendMessage(`student/${studentName}`, message);
+        appendMessage({
+            sender: `student/${studentName}`,
+            message,
+            attachment_url: file ? URL.createObjectURL(file) : null,
+            attachment_name: file ? file.name : null,
+            attachment_type: file ? (file.type.startsWith('image/') ? 'image' : (file.type.startsWith('video/') ? 'video' : 'document')) : null,
+            attachment_mime: file ? file.type : null,
+        });
 
         // scroll immediately for user message
         chatMessages.scrollTop = chatMessages.scrollHeight;
 
-
         chatInput.value = '';
+        attachmentInput.value = '';
+        updateAttachmentLabel();
 
         try {
+            const formData = new FormData();
+            formData.append('message', message);
+            formData.append('from_faq', fromFaq);
+            if (file) formData.append('attachment', file);
+
             const res = await fetch('/client/send-message', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRF-TOKEN': csrfToken
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
                 },
-                body: new URLSearchParams({ message, from_faq: fromFaq })
+                body: formData
             });
 
             const result = await res.json();
-            if (!result.success) return console.error("Message failed:", result.error);
+            if (!res.ok || !result.success) {
+                fetchMessages();
+                showStatusModal(getErrorMessage(result));
+                return console.error("Message failed:", result.error || result);
+            }
 
             fetchMessages();
         } catch (err) {
+            fetchMessages();
+            showStatusModal('Failed to send message. Please try again.');
             console.error("Send error:", err);
         }
     }
