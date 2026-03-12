@@ -52,7 +52,7 @@
                 <option value="student">Student</option>
                 <option value="faculty">Faculty / Staff</option>
                 <option value="alumni">Alumni</option>
-                <option value="others">Others</option>
+                <option value="others">Guest</option>
                 <option value="register">New Account</option>
             </select>
             <i class="fa-solid fa-angle-down dropdown-arrow"></i>
@@ -247,7 +247,7 @@
     <form id="othersLoginForm" class="contact-left hidden" method="POST" action="{{ route('client.login.post', ['clientType' => 'others']) }}">
         @csrf
         <div class="contact-left-title">
-            <h2>General Login</h2>
+            <h2>Guest Login</h2>
             <a type="button" class="back-btn" onclick="goBackToClientType()">
                 <i class="fa-solid fa-arrow-left"></i>
             </a>
@@ -294,7 +294,7 @@
                 <option value="student">Student</option>
                 <option value="faculty">Faculty / Staff</option>
                 <option value="alumni">Alumni</option>
-                <option value="others">Others</option>
+                <option value="others">Guest</option>
             </select>
              <i class="fa-solid fa-angle-down dropdown-arrow" style="right:125px"></i>
              </div>
@@ -992,7 +992,7 @@
     @csrf
 
     <div class="form-header">
-        <h2>Visitors Registration</h2>
+        <h2>Guest Registration</h2>
         <a type="button" class="back-btn" onclick="goBackToClientType()">
             <i class="fa-solid fa-arrow-left"></i>
         </a>
