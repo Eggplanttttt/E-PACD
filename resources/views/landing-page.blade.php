@@ -472,6 +472,11 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('assistance-btn'); 
     const tooltip = document.getElementById('assistance-tooltip');
+    const tooltipArrow = tooltip ? tooltip.querySelector('.tooltip-arrow') : null;
+
+    if (!btn || !tooltip || !tooltipArrow) {
+        return;
+    }
 
     const messages = [
         "If you have some question you are free to ask here!",
@@ -492,15 +497,48 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     let index = 0;
+    let hideTimer;
 
     function positionTooltip() {
         const rect = btn.getBoundingClientRect();
         const scrollTop = window.scrollY || document.documentElement.scrollTop;
         const scrollLeft = window.scrollX || document.documentElement.scrollLeft;
+        const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+        const btnCenterX = scrollLeft + rect.left + rect.width / 2;
+        const margin = 10;
 
-        // Position tooltip above the button and centered
-        tooltip.style.top = scrollTop + rect.top - tooltip.offsetHeight - 10 + 'px';
-        tooltip.style.left = scrollLeft + rect.left + rect.width / 2 - tooltip.offsetWidth / 2 + 'px';
+        // Center above button, but keep tooltip inside viewport.
+        const tooltipWidth = tooltip.offsetWidth;
+        let left = btnCenterX - tooltipWidth / 2;
+        const minLeft = scrollLeft + margin;
+        const maxLeft = scrollLeft + viewportWidth - tooltipWidth - margin;
+        left = Math.min(Math.max(left, minLeft), Math.max(minLeft, maxLeft));
+
+        let top = scrollTop + rect.top - tooltip.offsetHeight - 10;
+        const minTop = scrollTop + margin;
+
+        // If there is no room above, place below the button.
+        if (top < minTop) {
+            top = scrollTop + rect.bottom + 10;
+            tooltipArrow.style.top = '-6px';
+            tooltipArrow.style.bottom = 'auto';
+            tooltipArrow.style.borderTop = 'none';
+            tooltipArrow.style.borderBottom = '6px solid #027238';
+        } else {
+            tooltipArrow.style.top = 'auto';
+            tooltipArrow.style.bottom = '-6px';
+            tooltipArrow.style.borderBottom = 'none';
+            tooltipArrow.style.borderTop = '6px solid #027238';
+        }
+
+        tooltip.style.left = `${left}px`;
+        tooltip.style.top = `${top}px`;
+
+        // Move arrow so it points to button center.
+        const arrowCenter = Math.min(Math.max(btnCenterX - left, 14), tooltipWidth - 14);
+        tooltipArrow.style.left = `${arrowCenter}px`;
+        tooltipArrow.style.right = 'auto';
+        tooltipArrow.style.transform = 'translateX(-50%)';
     }
 
     function showTooltip() {
@@ -514,18 +552,20 @@ document.addEventListener('DOMContentLoaded', () => {
             positionTooltip();
         });
 
-        // Hide after 5 seconds
-        setTimeout(() => {
+        clearTimeout(hideTimer);
+
+        // Hide after 6 seconds
+        hideTimer = setTimeout(() => {
             tooltip.classList.add('hide');
             tooltip.classList.remove('show');
-        }, 5000);
+        }, 6000);
 
         index = (index + 1) % messages.length;
     }
 
-    // Initial show and rotate every 15 seconds
+    // Initial show and rotate every 10 seconds
     showTooltip();
-    setInterval(showTooltip, 15000);
+    setInterval(showTooltip, 10000);
 
     // Reposition on scroll or resize
     window.addEventListener('scroll', positionTooltip);
