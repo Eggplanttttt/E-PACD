@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\HandlesChatAttachments;
 use App\Models\Message;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
@@ -9,7 +10,9 @@ use Illuminate\Support\Facades\Auth;
 
 class StudentChatController extends Controller
 {
-    private const ADMIN_REPLY_DELAY = 10;
+    use HandlesChatAttachments;
+
+    private const ADMIN_REPLY_DELAY = 20;
     private const NAV_PENDING_DESTINATION_KEY = 'student_nav_pending_destination';
 
     public function __construct()
@@ -95,7 +98,9 @@ class StudentChatController extends Controller
      */
     public function sendMessage(Request $request)
     {
-        $request->validate(['message' => 'required|string|max:1000']);
+        $request->validate(array_merge([
+            'message' => 'nullable|string|max:1000',
+        ], $this->chatAttachmentRules()), $this->chatAttachmentMessages());
 
         $student = auth('student')->user();
         if (!$student) {
@@ -113,8 +118,9 @@ class StudentChatController extends Controller
 
         $rawMessage = trim($request->input('message'));
         $fromFaq = $request->input('from_faq', 0);
+        $attachmentData = $this->storeChatAttachment($request);
 
-        if (empty($rawMessage)) {
+        if ($rawMessage === '' && empty($attachmentData)) {
             return response()->json(['success' => false, 'error' => 'Message is empty.'], 422);
         }
 
@@ -126,10 +132,10 @@ class StudentChatController extends Controller
                 'client_type' => $clientType,
                 'client_id' => $clientId,
                 'sender' => "student/{$studentName}",
-                'message' => $censoredMessage,
+                'message' => $censoredMessage !== '' ? $censoredMessage : null,
                 'is_read' => 1,
                 'unread_for_admin' => 1
-            ]);
+            ] + $attachmentData);
         } catch (\Exception $e) {
             Log::error('Message save failed', ['error' => $e->getMessage()]);
             return response()->json(['success' => false, 'error' => 'DB Insert Failed: '.$e->getMessage()], 500);
