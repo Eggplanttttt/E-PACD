@@ -15,7 +15,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-custom">
   <div class="container-fluid">
     {{-- Brand --}}
-    <a class="navbar-brand d-none d-lg-inline" href="">Electronic Public Assistance & Complaint Desk</a>
+    <a class="navbar-brand d-none d-lg-inline" href="">Electronic Public Assistance & Complaints Desk</a>
     <a class="navbar-brand d-inline d-lg-none" href="">E-PACD</a>
 
     {{-- Account Dropdown --}}
