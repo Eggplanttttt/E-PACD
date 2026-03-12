@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\HandlesChatAttachments;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Message;
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\Log;
 
 class AdminInquiryController extends Controller
 {
+    use HandlesChatAttachments;
+
     /**
      * Display all clients with messages.
      */
@@ -209,6 +212,10 @@ class AdminInquiryController extends Controller
                 'sender'      => $msg->sender,
                 'sender_name' => trim($senderName),
                 'message'     => $msg->message,
+                'attachment_url' => $msg->attachment_url,
+                'attachment_name' => $msg->attachment_name,
+                'attachment_type' => $msg->attachment_type,
+                'attachment_mime' => $msg->attachment_mime,
                 'created_at'  => $msg->created_at->toDateTimeString(),
                 'unread_for_admin' => $msg->unread_for_admin,
             ];
@@ -233,24 +240,33 @@ class AdminInquiryController extends Controller
      */
     public function send(Request $request)
     {
-        $request->validate([
+        $request->validate(array_merge([
             'client_id'   => 'required|string',
             'client_type' => 'required|string',
             'sender'      => 'required|string',
-            'message'     => 'required|string|max:5000',
-        ]);
+            'message'     => 'nullable|string|max:5000',
+        ], $this->chatAttachmentRules()), $this->chatAttachmentMessages());
 
         $sender = strtolower($request->sender);
+        $attachmentData = $this->storeChatAttachment($request);
+        $message = trim((string) $request->message);
+
+        if ($message === '' && empty($attachmentData)) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Message is empty.',
+            ], 422);
+        }
 
         try {
             $msg = Message::create([
                 'client_id'        => $request->client_id,
                 'client_type'      => strtolower($request->client_type),
                 'sender'           => $sender,
-                'message'          => $request->message,
+                'message'          => $message !== '' ? $message : null,
                 'unread_for_admin' => $sender !== 'admin' ? 1 : 0,
                 'is_read'          => $sender === 'admin' ? 0 : 1,
-            ]);
+            ] + $attachmentData);
         } catch (\Exception $e) {
             Log::error('Admin send message failed', ['error' => $e->getMessage()]);
             return response()->json(['success' => false, 'error' => 'Message send failed.']);
@@ -265,6 +281,10 @@ class AdminInquiryController extends Controller
                 'sender'      => $msg->sender,
                 'sender_name' => $msg->sender === 'admin' ? 'Admin' : 'Client',
                 'message'     => $msg->message,
+                'attachment_url' => $msg->attachment_url,
+                'attachment_name' => $msg->attachment_name,
+                'attachment_type' => $msg->attachment_type,
+                'attachment_mime' => $msg->attachment_mime,
                 'created_at'  => $msg->created_at->toDateTimeString(),
                 'unread_for_admin' => $msg->unread_for_admin,
             ]
