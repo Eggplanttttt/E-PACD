@@ -18,6 +18,7 @@ class Other extends Authenticatable
         'last_name',
         'suffix',
         'address',
+        'contact_number',
         'client_type',
         'fb_id',
         'fb_avatar',
