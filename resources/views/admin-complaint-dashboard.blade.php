@@ -100,11 +100,11 @@
                                 <td class="text-end" id="pendingCount">{{ $pendingCount ?? 0 }}</td>
                             </tr>
                             <tr>
-                                <td><span class="dot solved"></span> Solved</td>
+                                <td><span class="dot solved"></span> Addressed</td>
                                 <td class="text-end" id="solvedCount">{{ $solvedCount ?? 0 }}</td>
                             </tr>
                             <tr>
-                                <td><span class="dot spammed"></span> Spammed</td>
+                                <td><span class="dot spammed"></span> Spams</td>
                                 <td class="text-end" id="spammedCount">{{ $spammedCount ?? 0 }}</td>
                             </tr>
 
@@ -127,7 +127,7 @@
             <div class="card text-white h-100 p-3 analytics-card" style="background:#1ea54b; height:180px; border-radius:8px;">
 
                 <!-- Small Label -->
-                <h6 class="mb-3 text-uppercase small fw-bold">Solved Inquiries</h6>
+                <h6 class="mb-3 text-uppercase small fw-bold">Addressed Inquiries</h6>
 
                 <!-- Big Number -->
                 <h1 class="fw-bold display-2 m-1 text-center" id="clientChatsCount">
@@ -305,7 +305,7 @@ document.addEventListener('DOMContentLoaded', function () {
     new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: ['Pending', 'Solved', 'Spammed'],
+            labels: ['Pending', 'Addressed', 'Spams'],
             datasets: [{
                 data: [pending, solved, spammed],
                 backgroundColor: ['#FF9800', '#4CAF50', '#F44336'],
