@@ -68,10 +68,10 @@
     {{-- top header (vd style) --}}
     <div class="vd-top">
       <div>
-        <div class="vd-breadcrumb">Audit / Complaints / Spam</div>
+        <div class="vd-breadcrumb">Audit / Complaints / Spams</div>
 
         <h1 class="vd-title">
-          Spam Complaints
+          Spams Complaints
           <span class="vd-title-icon" style="background: rgba(220,53,69,.12); color:#dc3545;">
             <i class="fa-solid fa-file-circle-exclamation"></i>
           </span>
@@ -94,7 +94,7 @@
             </li>
             <li>
               <a class="dropdown-item" href="{{ route('audit.complaints.solved') }}">
-                Solved <i class="fa-solid fa-user-check ms-1"></i>
+                Addressed <i class="fa-solid fa-user-check ms-1"></i>
               </a>
             </li>
           </ul>
@@ -114,7 +114,7 @@
     {{-- optional stats row --}}
     <div class="vd-stats">
       <div class="vd-stat">
-        <div class="vd-stat-label">Total Spam</div>
+        <div class="vd-stat-label">Total Spams</div>
         <div class="vd-stat-value">{{ $rejectedComplaints->count() }}</div>
       </div>
       <div class="vd-stat">
@@ -131,7 +131,7 @@
     <div class="vd-card">
       <div class="vd-card-head">
         <div class="vd-card-title">
-          <i class="fa-solid fa-table-list me-2"></i> Spam Records
+          <i class="fa-solid fa-table-list me-2"></i> Spams Records
         </div>
 
         {{-- search pill --}}
@@ -148,14 +148,14 @@
           <div style="text-align: center;">
             <img src="{{ asset('assets/shortcut_logo.png') }}" alt="Logo" style="height: 80px;">
             <h4>Quirino State University</h4>
-            <h5>Rejected Complaints Report</h5>
+            <h5>Spams Complaints Report</h5>
             <p>Date: <script>document.write(new Date().toLocaleDateString());</script></p>
             <hr>
           </div>
         </div>
 
         <div id="print-section">
-          <h2 class="print-section">Spam Complaints</h2>
+          <h2 class="print-section">Spams Complaints</h2>
 
           {{-- IMPORTANT: use vd-table, remove table-striped --}}
           <table id="table-reject" class="table vd-table align-middle">
