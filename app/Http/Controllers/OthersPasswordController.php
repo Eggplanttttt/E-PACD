@@ -5,86 +5,105 @@ namespace App\Http\Controllers;
 use App\Models\Other;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\PasswordResetOtp;
+use Laravel\Socialite\Facades\Socialite;
 
 class OthersPasswordController extends Controller
 {
     /**
-     * Step 1: Verify email and send OTP
+     * Step 1: Start Facebook confirmation for password reset
      */
     public function verifyEmail(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email'
+        return $this->redirectToFacebook();
+    }
+
+    public function redirectToFacebook()
+    {
+        session([
+            'facebook_password_reset' => true,
+            'client_type' => 'others',
         ]);
 
-        if (!str_ends_with($request->email, '@gmail.com')) {
-            return back()->withErrors(['email' => 'Invalid email.']);
+        return Socialite::driver('facebook')
+            ->redirectUrl(route('others.password.facebook.callback'))
+            ->scopes(['email'])
+            ->redirect();
+    }
+
+    public function handleFacebookCallback()
+    {
+        if (!session('facebook_password_reset')) {
+            return redirect()->route('others.password.forgot')
+                ->withErrors(['facebook' => 'Please start the password reset process again.']);
         }
 
-        $others = Other::where('email', $request->email)->first();
+        try {
+            $fbUser = Socialite::driver('facebook')
+                ->redirectUrl(route('others.password.facebook.callback'))
+                ->stateless()
+                ->user();
+        } catch (\Throwable $e) {
+            session()->forget(['facebook_password_reset']);
+
+            return redirect()->route('others.password.forgot')
+                ->withErrors(['facebook' => 'Facebook confirmation failed. Please try again.']);
+        }
+
+        $email = $fbUser->getEmail();
+        $fbId = $fbUser->getId();
+
+        if (!$email || !$fbId) {
+            session()->forget(['facebook_password_reset']);
+
+            return redirect()->route('others.password.forgot')
+                ->withErrors(['facebook' => 'Facebook did not return enough account details.']);
+        }
+
+        $others = Other::where('email', $email)->first();
 
         if (!$others) {
-            return back()->withErrors(['email' => 'Email is not registered.']);
+            session()->forget(['facebook_password_reset']);
+
+            return redirect()->route('others.password.forgot')
+                ->withErrors(['facebook' => 'No "others" account matched your Facebook email.']);
         }
 
-        // Generate 6-digit OTP
-        $otp = rand(100000, 999999);
+        if (!$others->fb_verified || !$others->fb_id) {
+            session()->forget(['facebook_password_reset']);
 
-        // Store OTP and email in session (valid for 10 min)
+            return redirect()->route('others.password.forgot')
+                ->withErrors(['facebook' => 'This account is not linked to Facebook for password recovery.']);
+        }
+
+        if ((string) $others->fb_id !== (string) $fbId) {
+            session()->forget(['facebook_password_reset']);
+
+            return redirect()->route('others.password.forgot')
+                ->withErrors(['facebook' => 'The Facebook account does not match this registered account.']);
+        }
+
         session([
-            'reset_email' => $request->email,
-            'reset_otp' => $otp,
-            'otp_created_at' => now(),
-            'reset_otp_sent' => true // mark OTP as sent
+            'reset_email' => $email,
+            'facebook_reset_verified' => true,
         ]);
 
-        // Send OTP email
-        Mail::to($request->email)->send(new PasswordResetOtp($otp));
+        session()->forget(['facebook_password_reset']);
 
-         return redirect()->route('others.password.otp.form')
-    ->with('success', 'An OTP has been sent to your email. Please check your inbox.');
+        return redirect()->route('others.password.reset.form')
+            ->with('success', 'Facebook confirmed. You can now reset your password.');
     }
 
     /**
-     * Step 2: Verify OTP
+     * Legacy OTP endpoint redirected to the new Facebook flow
      */
     public function verifyOtp(Request $request)
     {
-        $request->validate([
-            'otp' => 'required|digits:6'
-        ]);
-
-        $otp = session('reset_otp');
-        $createdAt = session('otp_created_at');
-
-        if (!$otp) {
-            return redirect()->route('others.password.forgot')
-                ->withErrors(['otp' => 'No OTP found. Please request again.']);
-        }
-
-        // Check OTP expiration (10 min)
-        if (now()->diffInMinutes($createdAt) > 10) {
-            session()->forget(['reset_email', 'reset_otp', 'reset_otp_sent']);
-            return redirect()->route('others.password.forgot')
-                ->withErrors(['otp' => 'OTP expired. Please request a new one.']);
-        }
-
-        if ($request->otp != $otp) {
-            return back()->withErrors(['otp' => 'Invalid OTP.']);
-        }
-
-        // OTP is correct
-        session(['otp_verified' => true]);
-
-        return redirect()->route('others.password.reset.form')
-            ->with('success', 'OTP verified. You can now reset your password.');
+        return redirect()->route('others.password.forgot')
+            ->withErrors(['facebook' => 'OTP is no longer used. Please confirm with Facebook instead.']);
     }
 
     /**
-     * Step 3: Reset password
+     * Step 2: Reset password
      */
     public function resetPassword(Request $request)
     {
@@ -103,9 +122,9 @@ class OthersPasswordController extends Controller
 
         $email = session('reset_email');
 
-        if (!session('otp_verified') || !$email) {
+        if (!session('facebook_reset_verified') || !$email) {
             return redirect()->route('others.password.forgot')
-                ->withErrors(['email' => 'You must verify your email with OTP first.']);
+                ->withErrors(['facebook' => 'You must confirm your account with Facebook first.']);
         }
 
         $others = Other::where('email', $email)->first();
@@ -119,7 +138,15 @@ class OthersPasswordController extends Controller
         $others->save();
 
         // Clear session after reset
-        session()->forget(['reset_email', 'reset_otp', 'otp_verified', 'reset_otp_sent']);
+        session()->forget([
+            'reset_email',
+            'reset_otp',
+            'otp_verified',
+            'reset_otp_sent',
+            'otp_created_at',
+            'facebook_password_reset',
+            'facebook_reset_verified',
+        ]);
 
         return redirect()->route('client.login', ['clientType' => 'others'])
             ->with('success', 'Password reset successfully. Please login.');
@@ -130,11 +157,7 @@ class OthersPasswordController extends Controller
      */
     public function showOtpForm()
     {
-        if (!session('reset_otp_sent')) {
-            return redirect()->route('others.password.forgot');
-        }
-
-        return view('auth.others-otp'); // Blade for OTP input
+        return redirect()->route('others.password.forgot');
     }
 
     /**
@@ -142,7 +165,7 @@ class OthersPasswordController extends Controller
      */
     public function showResetForm()
     {
-        if (!session('otp_verified')) {
+        if (!session('facebook_reset_verified')) {
             return redirect()->route('others.password.forgot');
         }
 
@@ -158,6 +181,8 @@ class OthersPasswordController extends Controller
             'otp_verified',
             'reset_otp_sent',
             'otp_created_at',
+            'facebook_password_reset',
+            'facebook_reset_verified',
         ]);
 
         return view('auth.others-forgot-password');
