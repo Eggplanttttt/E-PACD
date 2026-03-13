@@ -83,7 +83,7 @@
                     <h1 class="vd-title">
                         Complaints <span class="vd-title-icon"><i class="fa-solid fa-comments"></i></span>
                     </h1>
-                    <div class="vd-subtitle">Review, solve, or mark spam complaints</div>
+                    <div class="vd-subtitle">Review, Addressed, or Mark as Spam Complaints</div>
                 </div>
 
                 <div class="vd-actions">
@@ -92,8 +92,8 @@
                             <i class="fa-solid fa-wand-magic-sparkles me-1"></i> Complaint Actions
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{{ route('admin.complaints.solved') }}">Solved <i class="fa-solid fa-user-check ms-1"></i></a></li>
-                            <li><a class="dropdown-item" href="{{ route('admin.complaints.rejected') }}">Spam List <i class="fa-solid fa-file-circle-exclamation ms-1"></i></a></li>
+                            <li><a class="dropdown-item" href="{{ route('admin.complaints.solved') }}">Addressed <i class="fa-solid fa-user-check ms-1"></i></a></li>
+                            <li><a class="dropdown-item" href="{{ route('admin.complaints.rejected') }}">Spams<i class="fa-solid fa-file-circle-exclamation ms-1"></i></a></li>
                         </ul>
                     </div>
                 </div>
@@ -134,7 +134,6 @@
                 </div>
 
                 <div class="vd-card-body">
-                    {{-- ✅ keep your existing table but remove bootstrap table-striped --}}
                     <table id="table-complaint" class="table vd-table align-middle">
                         <thead>
                             <tr>
