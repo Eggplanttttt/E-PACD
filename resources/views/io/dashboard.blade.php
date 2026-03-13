@@ -10,6 +10,134 @@
 
 @section('styles')
 <link rel="stylesheet" href="{{ asset('css/io-dashboard.css') }}">
+<style>
+    .addressed-inquiries-card {
+        background: linear-gradient(135deg, #1ea54b 0%, #16853b 100%);
+        min-height: 220px;
+        border-radius: 12px;
+    }
+
+    .customer-reviews-card {
+        min-height: 220px;
+        border-radius: 12px;
+    }
+
+    .sample-stars {
+        color: #f59e0b;
+        letter-spacing: 0.08rem;
+    }
+
+    .reviews-breakdown {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+    }
+
+    .review-row {
+        display: grid;
+        grid-template-columns: 70px 1fr 42px;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .review-label,
+    .review-value {
+        color: #dbe3ec;
+        white-space: nowrap;
+    }
+
+    body:not(.dark-mode) .review-label,
+    body:not(.dark-mode) .review-value,
+    body:not(.dark-mode) .customer-reviews-card .text-muted {
+        color: #4b5563 !important;
+    }
+
+    .review-bar-track {
+        position: relative;
+        height: 12px;
+        border-radius: 3px;
+        background: #e5e7eb;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .review-bar-fill {
+        height: 100%;
+        min-width: 6px;
+        border-radius: 3px;
+        background: #f59e0b;
+    }
+
+    body.dark-mode .review-bar-track {
+        background: #d1d5db;
+    }
+
+    .ratings-explainer {
+        font-size: 0.9rem;
+    }
+
+    .ratings-explainer summary {
+        cursor: pointer;
+        color: #6b7280;
+        font-weight: 600;
+        list-style: none;
+        user-select: none;
+    }
+
+    .ratings-explainer summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .ratings-explainer summary::before {
+        content: '\f0d7';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        margin-right: 0.4rem;
+        font-size: 0.75rem;
+    }
+
+    .ratings-explainer[open] summary::before {
+        content: '\f0d8';
+    }
+
+    .ratings-explainer-body {
+        margin-top: 0.6rem;
+        color: #6b7280;
+        line-height: 1.5;
+        font-size: 0.85rem;
+    }
+
+    .ratings-explainer-body code {
+        color: inherit;
+        background: rgba(148, 163, 184, 0.18);
+        padding: 0.1rem 0.35rem;
+        border-radius: 4px;
+    }
+
+    body.dark-mode .ratings-explainer summary,
+    body.dark-mode .ratings-explainer-body {
+        color: #9ca3af;
+    }
+
+    body.dark-mode .ratings-explainer-body code {
+        background: rgba(148, 163, 184, 0.12);
+    }
+
+    @media (max-width: 767.98px) {
+        .addressed-inquiries-card,
+        .customer-reviews-card {
+            min-height: auto;
+        }
+
+        .review-row {
+            grid-template-columns: 60px 1fr 38px;
+            gap: 0.5rem;
+            font-size: 0.82rem;
+        }
+    }
+</style>
 @endsection
 
 @section('content')
@@ -84,7 +212,7 @@
             <div class="row g-3">
 
                 {{-- Complaints Card (VIEW ONLY FOR IO) --}}
-                <div class="col-md-4">
+                <div class="col-lg-6">
                     <div class="card h-100 p-3 analytics-card">
                         <h6 class="mb-3 text-uppercase small fw-bold">Complaints (View Only)</h6>
 
@@ -129,17 +257,21 @@
                 </div>
 
                 {{-- Solved Inquiries Card --}}
-                <div class="col-md-4">
-                    <div class="card text-white h-100 p-3 analytics-card" style="background:#1ea54b; height:180px; border-radius:8px;">
+                <div class="col-lg-6">
+                    <div class="card text-white h-100 p-3 analytics-card addressed-inquiries-card">
                         <h6 class="mb-3 text-uppercase small fw-bold">Solved Inquiries</h6>
-                        <h1 class="fw-bold display-2 m-1 text-center" id="clientChatsCount">
-                            {{ $clientChatsCount ?? 0 }}
-                        </h1>
+
+                        <div class="d-flex flex-column justify-content-center align-items-center h-100">
+                            <h1 class="fw-bold display-2 m-0 text-center" id="clientChatsCount">
+                                {{ $clientChatsCount ?? 0 }}
+                            </h1>
+                            <small class="mt-2 opacity-75">Resolved inquiry threads</small>
+                        </div>
                     </div>
                 </div>
 
                 {{-- Client Accounts Card --}}
-                <div class="col-md-4">
+                <div class="col-lg-6">
                     <div class="card h-100 p-3 analytics-card">
                         <h6 class="mb-3 text-uppercase small fw-bold">Client Accounts</h6>
 
@@ -179,6 +311,87 @@
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                </div>
+
+                {{-- Customer Reviews Card --}}
+                <div class="col-lg-6">
+                    <div class="card h-100 p-3 analytics-card customer-reviews-card">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h6 class="mb-1 fw-bold">Clients reviews</h6>
+                                <div class="sample-stars mb-1">
+                                    @php
+                                        $fullStars = floor($chatRatingsAverage ?? 0);
+                                        $hasHalfStar = (($chatRatingsAverage ?? 0) - $fullStars) >= 0.5;
+                                    @endphp
+
+                                    @for ($star = 1; $star <= 5; $star++)
+                                        @if ($star <= $fullStars)
+                                            <i class="fa-solid fa-star"></i>
+                                        @elseif ($star === $fullStars + 1 && $hasHalfStar)
+                                            <i class="fa-solid fa-star-half-stroke"></i>
+                                        @else
+                                            <i class="fa-regular fa-star"></i>
+                                        @endif
+                                    @endfor
+                                </div>
+                                <div class="small text-muted">{{ number_format($chatRatingsTotal ?? 0) }} global ratings</div>
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-bold fs-5">{{ number_format($chatRatingsAverage ?? 0, 1) }} out of 5</div>
+                                <small class="text-muted">Based on chat-ratings</small>
+                            </div>
+                        </div>
+
+                        <div class="reviews-breakdown">
+                            @php
+                                $reviewBreakdown = [];
+
+                                for ($star = 5; $star >= 1; $star--) {
+                                    $count = $chatRatingCounts[$star] ?? 0;
+                                    $percent = ($chatRatingsTotal ?? 0) > 0
+                                        ? round(($count / $chatRatingsTotal) * 100)
+                                        : 0;
+
+                                    $reviewBreakdown[] = [
+                                        'label' => "{$star} star",
+                                        'percent' => $percent,
+                                        'count' => $count,
+                                    ];
+                                }
+                            @endphp
+
+                            @if (($chatRatingsTotal ?? 0) > 0)
+                                @foreach($reviewBreakdown as $review)
+                                    <div class="review-row">
+                                        <span class="review-label">{{ $review['label'] }}</span>
+                                        <div class="review-bar-track">
+                                            <div class="review-bar-fill" style="width: {{ $review['percent'] }}%;"></div>
+                                        </div>
+                                        <span class="review-value">{{ $review['percent'] }}%</span>
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="text-muted small">No chat ratings yet.</div>
+                            @endif
+                        </div>
+
+                        <details class="ratings-explainer mt-3">
+                            <summary>How are ratings calculated?</summary>
+                            <div class="ratings-explainer-body">
+                                The percentages are based on all records saved in <code>chat_ratings</code>.
+                                Each row uses this formula:
+                                <code>(star count / total chat ratings) x 100</code>.
+                                With {{ number_format($chatRatingsTotal ?? 0) }} total rating{{ ($chatRatingsTotal ?? 0) == 1 ? '' : 's' }},
+                                the dashboard currently counts
+                                5-star: {{ $chatRatingCounts[5] ?? 0 }},
+                                4-star: {{ $chatRatingCounts[4] ?? 0 }},
+                                3-star: {{ $chatRatingCounts[3] ?? 0 }},
+                                2-star: {{ $chatRatingCounts[2] ?? 0 }},
+                                1-star: {{ $chatRatingCounts[1] ?? 0 }}.
+                            </div>
+                        </details>
                     </div>
                 </div>
 
