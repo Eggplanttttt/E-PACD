@@ -419,7 +419,11 @@ Route::prefix('others')->group(function () {
     Route::post('/forgot-password/verify', [OthersPasswordController::class, 'verifyEmail'])
         ->name('others.password.verify');
 
-        
+    Route::get('/forgot-password/facebook', [OthersPasswordController::class, 'redirectToFacebook'])
+        ->name('others.password.facebook.redirect');
+
+    Route::get('/forgot-password/facebook/callback', [OthersPasswordController::class, 'handleFacebookCallback'])
+        ->name('others.password.facebook.callback');
 
     Route::post('/forgot-password/reset', [OthersPasswordController::class, 'resetPassword'])
         ->name('others.password.reset');
