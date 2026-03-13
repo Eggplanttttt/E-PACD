@@ -24,8 +24,8 @@ class OthersPasswordController extends Controller
             'client_type' => 'others',
         ]);
 
-        return Socialite::driver('facebook')
-            ->redirectUrl(route('others.password.facebook.callback'))
+       return Socialite::driver('facebook')
+            ->redirectUrl(route('facebook.callback'))
             ->scopes(['email'])
             ->redirect();
     }
@@ -38,8 +38,8 @@ class OthersPasswordController extends Controller
         }
 
         try {
-            $fbUser = Socialite::driver('facebook')
-                ->redirectUrl(route('others.password.facebook.callback'))
+           $fbUser = Socialite::driver('facebook')
+                ->redirectUrl(route('facebook.callback'))
                 ->stateless()
                 ->user();
         } catch (\Throwable $e) {
