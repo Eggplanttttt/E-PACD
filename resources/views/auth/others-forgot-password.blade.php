@@ -54,69 +54,32 @@
         </a>
 
         <h2>Forgot Password</h2>
+        <p class="subtitle">Confirm your account with the same Facebook account you used to register, then you can reset your password.</p>
 
-        @if(session('reset_otp_sent'))
-            <p class="subtitle">Enter the OTP sent to your email to continue</p>
+        @error('facebook')
+            <p class="error-text">{{ $message }}</p>
+        @enderror
 
-            <form method="POST" action="{{ route('others.password.otp.verify') }}">
-                @csrf
+        @error('email')
+            <p class="error-text">{{ $message }}</p>
+        @enderror
 
-                <div class="input-group">
-                    <i class="fa-solid fa-key"></i>
-                    <input
-                        type="text"
-                        name="otp"
-                        placeholder="Enter OTP"
-                        required>
-                </div>
-
-                @error('otp')
-                    <p class="error-text">{{ $message }}</p>
-                @enderror
-
-                <button type="submit" class="submit-btn">
-                    Verify OTP
-                </button>
-            </form>
-
-        @else
-            <p class="subtitle">Enter your email to verify your account</p>
-
-            <form method="POST" action="{{ route('others.password.verify') }}" id="verify-email-form">
-                @csrf
-
-                <div class="input-group">
-                    <i class="fa-solid fa-envelope"></i>
-                    <input
-                        type="email"
-                        name="email"
-                        placeholder="Enter your email"
-                        required>
-                </div>
-
-                @error('email')
-                    <p class="error-text">{{ $message }}</p>
-                @enderror
-
-                <button type="submit" class="submit-btn" id="verify-email-btn">
-                    Verify Email
-                </button>
-            </form>
-        @endif
+        <a href="{{ route('others.password.facebook.redirect') }}" class="submit-btn" id="verify-facebook-btn" style="display: inline-flex; justify-content: center; align-items: center; text-decoration: none;">
+            Continue with Facebook
+        </a>
 
     </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const verifyForm = document.getElementById('verify-email-form');
-    const verifyBtn = document.getElementById('verify-email-btn');
+    const verifyBtn = document.getElementById('verify-facebook-btn');
 
-    if (!verifyForm || !verifyBtn) return;
+    if (!verifyBtn) return;
 
-    verifyForm.addEventListener('submit', function () {
-        verifyBtn.disabled = true;
-        verifyBtn.textContent = 'Sending...';
+    verifyBtn.addEventListener('click', function () {
+        verifyBtn.style.pointerEvents = 'none';
+        verifyBtn.textContent = 'Redirecting...';
     });
 });
 </script>
