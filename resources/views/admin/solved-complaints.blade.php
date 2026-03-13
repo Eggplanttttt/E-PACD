@@ -86,14 +86,14 @@
         {{-- top header (same style as pending) --}}
         <div class="vd-top">
         <div>
-            <div class="vd-breadcrumb">Admin / Complaints / Solved</div>
+            <div class="vd-breadcrumb">Admin / Complaints / Addressed</div>
 
             <h1 class="vd-title">
-            Solved Complaints
+            Addressed Complaints
             <span class="vd-title-icon"><i class="fa-solid fa-user-check"></i></span>
             </h1>
 
-            <div class="vd-subtitle">View solved complaints and export/print reports</div>
+            <div class="vd-subtitle">View Addressed complaints and export/print reports</div>
         </div>
 
         <div class="vd-actions d-flex gap-2 align-items-center">
@@ -122,7 +122,7 @@
         {{-- optional stats row (like pending) --}}
         <div class="vd-stats">
         <div class="vd-stat">
-            <div class="vd-stat-label">Total Solved</div>
+            <div class="vd-stat-label">Total Addressed</div>
             <div class="vd-stat-value">{{ $solvedComplaints->count() }}</div>
         </div>
         <div class="vd-stat">
@@ -139,7 +139,7 @@
         <div class="vd-card">
         <div class="vd-card-head">
             <div class="vd-card-title">
-            <i class="fa-solid fa-table-list me-2"></i> Solved Records
+            <i class="fa-solid fa-table-list me-2"></i> Addressed Records
             </div>
 
             {{-- search pill (like pending) --}}
@@ -155,14 +155,14 @@
                 <div style="text-align: center;">
                     <img src="{{ asset('assets/shortcut_logo.png') }}" alt="Logo" style="height: 80px;">
                     <h4>Quirino State University</h4>
-                    <h5>Solved Complaints Report</h5>
+                    <h5>Addressed Complaints Report</h5>
                     <p>Date: <script>document.write(new Date().toLocaleDateString());</script></p>
                     <hr>
                 </div>
             </div>
 
             <div id="print-section">
-            <h2 class="print-section">Solved Complaints</h2>
+            <h2 class="print-section">Addressed Complaints</h2>
 
             {{-- IMPORTANT: use vd-table, remove table-striped --}}
             <table id="table-solved" class="table vd-table align-middle">
