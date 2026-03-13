@@ -223,8 +223,29 @@
     .chat-container {
         margin-left: 165px;
         display: flex;
-        height: 75vh;
+        height: 78.5vh !important;
         overflow: hidden;
+    }
+
+    /* Large desktop */
+    @media (min-width: 1500px) {
+        .chat-container {
+            height: 80.5vh !important; 
+        }
+    }
+
+    /* Large desktop */
+    @media (min-width: 1600px) {
+        .chat-container {
+            height: 82.5vh !important;
+        }
+    }
+
+    /* Full HD wide monitors */
+    @media (min-width: 1820px) {
+        .chat-container {
+            height: 90hx !important;
+        }
     }
 
     header {
