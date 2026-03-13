@@ -82,7 +82,7 @@
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li>
                                 <a class="dropdown-item" href="{{ route('audit.complaints.solved') }}">
-                                    Solved <i class="fa-solid fa-user-check ms-1"></i>
+                                    Addressed <i class="fa-solid fa-user-check ms-1"></i>
                                 </a>
                             </li>
                             <li>
