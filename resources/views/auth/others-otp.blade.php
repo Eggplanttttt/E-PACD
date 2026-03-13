@@ -9,7 +9,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QSU E-PACD | Others Email OTP</title>
+    <title>QSU E-PACD | Others Facebook Confirmation</title>
     <link rel="icon" href="{{ asset('assets/shortcut_logo.png') }}">
     <link rel="stylesheet" href="{{ asset('../assets/fontawesome/css/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('../css/forgot-client.css') }}">
@@ -50,40 +50,31 @@
     <div class="forgot-card">
 
         <a href="{{ route('others.password.forgot') }}" class="back-btn">
-            ← Change email
+            <i class="fa-solid fa-arrow-left"></i> Back
         </a>
 
-        <h2>Verify OTP</h2>
-        <p class="subtitle">Enter the OTP sent to your email</p>
+        <h2>Confirm With Facebook</h2>
+        <p class="subtitle">OTP is no longer used here. Confirm with the same Facebook account you used to register, then continue to reset your password.</p>
 
-        <form method="POST" action="{{ route('others.password.otp.verify') }}" id="verify-otp-form">
-            @csrf
+        @error('facebook')
+            <p class="error-text">{{ $message }}</p>
+        @enderror
 
-            <div class="input-group">
-                <input type="text" name="otp" placeholder="Enter OTP" required>
-            </div>
-
-            @error('otp')
-                <p class="error-text">{{ $message }}</p>
-            @enderror
-
-            <button type="submit" class="submit-btn" id="verify-otp-btn">
-                Verify OTP
-            </button>
-        </form>
+        <a href="{{ route('others.password.facebook.redirect') }}" class="submit-btn" id="verify-facebook-btn" style="display: inline-flex; justify-content: center; align-items: center; text-decoration: none;">
+            Continue with Facebook
+        </a>
 
     </div>
 </div>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const verifyOtpForm = document.getElementById('verify-otp-form');
-    const verifyOtpBtn = document.getElementById('verify-otp-btn');
+    const verifyBtn = document.getElementById('verify-facebook-btn');
 
-    if (!verifyOtpForm || !verifyOtpBtn) return;
+    if (!verifyBtn) return;
 
-    verifyOtpForm.addEventListener('submit', function () {
-        verifyOtpBtn.disabled = true;
-        verifyOtpBtn.textContent = 'Verifying...';
+    verifyBtn.addEventListener('click', function () {
+        verifyBtn.style.pointerEvents = 'none';
+        verifyBtn.textContent = 'Redirecting...';
     });
 });
 </script>
