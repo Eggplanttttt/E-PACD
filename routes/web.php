@@ -644,3 +644,6 @@ Route::middleware(['auth:admin', 'role:audit'])
 
     Route::get('/admin/complaints/solved/export', [ComplaintController::class, 'exportSolvedExcel'])
     ->name('admin.complaints.solved.export');
+
+
+Route::view('/privacy-policy', 'privacy')->name('privacy.policy');
