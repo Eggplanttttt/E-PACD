@@ -113,6 +113,30 @@ class AdminController extends Controller
         // Feedback
         $feedbackCount = Feedback::count();
         $feedbacks = Feedback::all();
+        $chatRatings = ChatRating::latest()->get();
+
+        $chatRatingCounts = collect(range(1, 5))
+            ->mapWithKeys(fn ($star) => [$star => 0])
+            ->all();
+
+        foreach ($chatRatings as $chatRating) {
+            $stars = (int) $chatRating->stars;
+
+            if (isset($chatRatingCounts[$stars])) {
+                $chatRatingCounts[$stars]++;
+            }
+        }
+
+        $chatRatingsTotal = array_sum($chatRatingCounts);
+        $chatRatingsAverage = $chatRatingsTotal > 0
+            ? round(
+                collect($chatRatingCounts)->reduce(
+                    fn ($carry, $count, $stars) => $carry + ($count * (int) $stars),
+                    0
+                ) / $chatRatingsTotal,
+                1
+            )
+            : 0;
 
         // Clients (merged with display_name and client_type)
         $students = Student::select(
@@ -155,7 +179,8 @@ class AdminController extends Controller
         return view('admin-complaint-dashboard', compact(
             'complaintCount', 'timePeriodLabel', 'feedbackCount', 'feedbacks',
             'pendingCount', 'solvedCount', 'spammedCount', 'clients',
-            'deptLabels', 'deptCounts'
+            'deptLabels', 'deptCounts', 'chatRatingCounts', 'chatRatingsTotal',
+            'chatRatingsAverage'
         ));
     }
 
@@ -188,6 +213,30 @@ class AdminController extends Controller
 
         // Feedback (for charts)
         $feedbacks = Feedback::all();
+        $chatRatings = ChatRating::latest()->get();
+
+        $chatRatingCounts = collect(range(1, 5))
+            ->mapWithKeys(fn ($star) => [$star => 0])
+            ->all();
+
+        foreach ($chatRatings as $chatRating) {
+            $stars = (int) $chatRating->stars;
+
+            if (isset($chatRatingCounts[$stars])) {
+                $chatRatingCounts[$stars]++;
+            }
+        }
+
+        $chatRatingsTotal = array_sum($chatRatingCounts);
+        $chatRatingsAverage = $chatRatingsTotal > 0
+            ? round(
+                collect($chatRatingCounts)->reduce(
+                    fn ($carry, $count, $stars) => $carry + ($count * (int) $stars),
+                    0
+                ) / $chatRatingsTotal,
+                1
+            )
+            : 0;
 
         // Build summary for Google Charts (same logic as admin)
         $summary = [];
@@ -266,7 +315,10 @@ class AdminController extends Controller
             'deptLabels',
             'deptCounts',
             'feedbacks',
-            'summary'
+            'summary',
+            'chatRatingCounts',
+            'chatRatingsTotal',
+            'chatRatingsAverage'
         ));
     }
 
