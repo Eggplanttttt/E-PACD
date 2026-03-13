@@ -77,7 +77,7 @@
             <div class="row g-3">
 
                 {{-- Complaints Card --}}
-<div class="col-12 col-lg-5 col-xl-4">
+                <div class="col-12">
     <div class="card h-100 p-3 analytics-card vd-card">
         <div class="vd-card-head">
             <h6 class="mb-0 text-uppercase small fw-bold">Complaints</h6>
@@ -103,11 +103,11 @@
                         <td class="text-end" id="pendingCount">{{ $pendingCount ?? 0 }}</td>
                     </tr>
                     <tr>
-                        <td><span class="dot solved"></span> Solved</td>
+                        <td><span class="dot solved"></span> Addressed</td>
                         <td class="text-end" id="solvedCount">{{ $solvedCount ?? 0 }}</td>
                     </tr>
                     <tr>
-                        <td><span class="dot spammed"></span> Spammed</td>
+                        <td><span class="dot spammed"></span> Spams</td>
                         <td class="text-end" id="spammedCount">{{ $spammedCount ?? 0 }}</td>
                     </tr>
                     <tr class="fw-bold border-top">
@@ -175,7 +175,7 @@
 </div>
 
                 {{-- Client Satisfaction (Collapsible Card) --}}
-                <div class="col-12 col-lg-7 col-xl-8">
+                <div class="col-12">
                     <div class="card h-100 p-3 analytics-card vd-card">
                         <div class="vd-card-head vd-card-head--toggle">
                             <div>
@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', function () {
         window.complaintDoughnutChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['Pending', 'Solved', 'Spammed'],
+                labels: ['Pending', 'Addressed', 'Spams'],
                 datasets: [{
                     data: [pending, solved, spammed],
                     backgroundColor: ['#FF9800', '#4CAF50', '#F44336'],
