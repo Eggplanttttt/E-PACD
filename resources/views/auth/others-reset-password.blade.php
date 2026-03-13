@@ -41,15 +41,15 @@
         <div class="fas fa-bars" id="menu-btn"></div>
     </div>
 </header>
-    <div class="forgot-wrapper">
+<div class="forgot-wrapper">
     <div class="forgot-card">
 
         <a href="{{ route('others.password.forgot') }}" class="back-btn">
-            ← Change email
+            <i class="fa-solid fa-arrow-left"></i> Back
         </a>
 
         <h2>Reset Password</h2>
-        <p class="subtitle">Enter your new password to reset your account</p>
+        <p class="subtitle">Your Facebook account has been confirmed. Enter your new password to reset your account.</p>
 
         <form method="POST" action="{{ route('others.password.reset') }}">
             @csrf
@@ -81,7 +81,7 @@
             </div>
 
             <p class="password-requirements">
-                Password must be at least <span class="req-item" id="req-length">8 characters</span>, include <span class="req-item" id="req-uppercase">one uppercase letter</span>, 
+                Password must be at least <span class="req-item" id="req-length">8 characters</span>, include <span class="req-item" id="req-uppercase">one uppercase letter</span>,
                 <span class="req-item" id="req-number">one number</span>, and <span class="req-item" id="req-special">one special character</span>.
             </p>
 
