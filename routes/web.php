@@ -647,3 +647,4 @@ Route::middleware(['auth:admin', 'role:audit'])
 
 
 Route::view('/privacy-policy', 'privacy')->name('privacy.policy');
+Route::view('/data-deletion', 'data-deletion')->name('data.deletion');
