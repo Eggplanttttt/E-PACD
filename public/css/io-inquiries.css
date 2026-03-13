@@ -1,4 +1,4 @@
-    @import url('https://fonts.googleapis.com/css2?family=Merriweather+Sans:wght@300;400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Merriweather+Sans:wght@300;400;500;600;700;800&display=swap');
 
     :root {
         --main-color: #22BAA0;
@@ -12,7 +12,7 @@
         text-decoration: none;
         list-style-type: none;
         box-sizing: border-box;
-        font-family: 'Merriweather', sans-serif;
+        font-family: 'Merriweather Sans', sans-serif;
     }
 
     .sidebar {
@@ -223,8 +223,29 @@
     .chat-container {
         margin-left: 165px;
         display: flex;
-        height: 75vh;
+        height: 76vh !important;
         overflow: hidden;
+    }
+
+    /* Large desktop */
+    @media (min-width: 1500px) {
+        .chat-container {
+            height: 78vh !important; 
+        }
+    }
+
+    /* Large desktop */
+    @media (min-width: 1600px) {
+        .chat-container {
+            height: 80.5vh !important;
+        }
+    }
+
+    /* Full HD wide monitors */
+    @media (min-width: 1820px) {
+        .chat-container {
+            height: 95hx !important;
+        }
     }
 
     header {
@@ -289,9 +310,6 @@
         font-size: .8rem;
     }
 
-    main {
-        margin-top: 10px;
-    }
 
     .page-header {
         padding: 1.3rem 1rem;
@@ -673,7 +691,7 @@ header .dropdown-toggle img {
   --shadow:0 14px 40px rgba(15,23,42,.10);
   --radius:16px;
 
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-family: 'Merriweather Sans', sans-serif;
   color: var(--text);
 }
 
@@ -737,6 +755,8 @@ header .dropdown-toggle img {
 }
 .epacd-inq .client-name{
   font-size: 14px;
+  line-height: 1.25;
+  font-weight: 700;
 }
 .epacd-inq .unread-badge{
   font-weight: 800;
@@ -757,6 +777,7 @@ header .dropdown-toggle img {
 .epacd-inq #clientTypeName{
   font-size: 13px;
   font-weight: 900;
+  line-height: 1.2;
   color: var(--muted);
   letter-spacing: .08em;
 }
@@ -778,8 +799,12 @@ header .dropdown-toggle img {
   border: 1px solid var(--border);
   border-radius: 999px;
   padding: 10px 14px;
+  height: 42px;
+  font-size: 14px;
+  line-height: 20px;
   outline: none;
   transition: box-shadow .15s ease, border-color .15s ease;
+  appearance: none;
 }
 .epacd-inq .chat-search input:focus{
   border-color: rgba(30,123,85,.45);
@@ -793,10 +818,17 @@ header .dropdown-toggle img {
 .epacd-inq .search-controls button{
   border: 1px solid var(--border);
   background: #fff;
-  padding: 8px 10px;
+  width: 32px;
+  min-width: 32px;
+  height: 42px;
+  padding: 0;
   border-radius: 10px;
   cursor:pointer;
+  font-size: 18px;
+  line-height: 1;
+  font-weight: 700;
   transition: transform .12s ease, box-shadow .12s ease;
+  appearance: none;
 }
 .epacd-inq .search-controls button:hover{
   transform: translateY(-1px);
@@ -806,10 +838,17 @@ header .dropdown-toggle img {
   background: rgba(15,23,42,.06);
   border: 1px solid var(--border);
   border-radius: 999px;
-  padding: 6px 10px;
-  font-weight: 800;
+  width: 74px;
   min-width: 74px;
+  height: 42px;
+  padding: 0 10px;
+  font-weight: 800;
+  font-size: 14px;
+  line-height: 42px;
   text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* messages area */
@@ -833,6 +872,7 @@ header .dropdown-toggle img {
 .epacd-inq #chatMessages .p-2.rounded small{
   font-size: 12px;
   font-weight: 900 !important;
+  line-height: 1.2;
   opacity: .9;
 }
 
@@ -964,6 +1004,7 @@ header .dropdown-toggle img {
 .epacd-inq .clients-list .client-link .client-name{
   font-size: 14px;
   letter-spacing: .2px;
+  line-height: 1.25;
 }
 
 /* =============================
@@ -981,7 +1022,9 @@ header .dropdown-toggle img {
   border: 1px solid var(--border) !important;
   padding: 7px 12px !important;
   font-size: 14px !important;
+  line-height: 20px !important;
   height: 46px !important;
+  appearance: none;
 }
 
 /* smaller send button */
@@ -989,9 +1032,11 @@ header .dropdown-toggle img {
   height: 46px !important;
   padding: 0 14px !important;
   font-size: 14px !important;
+  line-height: 1 !important;
   border-radius: 999px !important;
   font-weight: 700 !important;
   box-shadow: 0 6px 14px rgba(30,123,85,.18);
+  appearance: none;
 }
 
 /* nicer hover */
@@ -1013,6 +1058,14 @@ header .dropdown-toggle img {
 :root{
   --io-sidebar-w: 250px;
   --io-gap: 16px;
+}
+
+html{
+  color-scheme: light;
+}
+
+body.dark-mode{
+  color-scheme: dark;
 }
 
 #menu-toggle{ display:none !important; }
@@ -1078,6 +1131,7 @@ body{
   line-height: 1.1;
   white-space: nowrap;
   font-weight: 700;
+  text-rendering: geometricPrecision;
 }
 
 .profile small{
@@ -1089,6 +1143,7 @@ body{
   text-transform: uppercase;
   letter-spacing: .06em;
   line-height: 1.1;
+  text-rendering: geometricPrecision;
 }
 
 .side-menu ul{
@@ -1138,9 +1193,11 @@ body{
 .side-menu button small{
   font-size: 1.05rem;
   font-weight: 700;
+  line-height: 1.2;
   color: #33383e;
   letter-spacing: 0;
   margin: 0 !important;
+  text-rendering: geometricPrecision;
 }
 
 .side-menu li a:hover,
@@ -1205,6 +1262,21 @@ main{
 .epacd-inq .page-header h1,
 .epacd-inq .page-header small{
   color: #5f6a76 !important;
+}
+
+.epacd-inq .page-header h1{
+  font-size: 3rem !important;
+  line-height: 1.08 !important;
+  font-weight: 800 !important;
+  text-rendering: geometricPrecision;
+}
+
+.epacd-inq .page-header small{
+  display: block;
+  font-size: 1rem !important;
+  line-height: 1.2 !important;
+  font-weight: 500 !important;
+  text-rendering: geometricPrecision;
 }
 
 .epacd-inq .epacd-card{
@@ -1279,9 +1351,10 @@ body.dark-mode .epacd-inq .messages,
 body.dark-mode .epacd-inq .text-muted,
 body.dark-mode .epacd-inq .form-control,
 body.dark-mode .epacd-inq input,
-body.dark-mode .epacd-inq button,
-body.dark-mode .epacd-inq span,
-body.dark-mode .epacd-inq small,
+body.dark-mode .epacd-inq .chat-search button,
+body.dark-mode .epacd-inq #match-counter,
+body.dark-mode .epacd-inq #replyAttachmentName,
+body.dark-mode .epacd-inq .chat-header small,
 body.dark-mode .epacd-inq h5,
 body.dark-mode .epacd-inq h6{
   color: #dbe3ec !important;
@@ -1324,6 +1397,7 @@ body.dark-mode .epacd-inq .chat-search input{
   background: #0f141a !important;
   border-color: #2d333b !important;
   color: #e6edf3 !important;
+  box-shadow: none !important;
 }
 
 body.dark-mode .epacd-inq .search-controls button,
@@ -1331,6 +1405,7 @@ body.dark-mode .epacd-inq #match-counter{
   background: #0f141a !important;
   border-color: #2d333b !important;
   color: #e6edf3 !important;
+  box-shadow: none !important;
 }
 
 @media (max-width: 992px){
