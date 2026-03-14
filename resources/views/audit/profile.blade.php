@@ -10,10 +10,11 @@
 
 @section('content')
 
-<input type="checkbox" id="menu-toggle" hidden>
-
-<div class="sidebar">
+<div class="sidebar" id="mobileSidebar">
     <div class="side-content">
+        <button type="button" class="menu-close d-lg-none" aria-label="Close menu" onclick="closeMobileMenu()" onpointerup="closeMobileMenu()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
         <div class="profile">
             <div class="profile-image">
                 <img src="{{ asset('assets/logoo.png') }}" class="rounded-circle" width="100" height="100" alt="Logo">
@@ -63,13 +64,15 @@
         </div>
     </div>
 </div>
+<button type="button" id="menuOverlay" class="menu-overlay d-lg-none" aria-label="Close menu" onclick="closeMobileMenu()" onpointerup="closeMobileMenu()"></button>
 
 <div class="main-content">
     <header>
-        <label for="menu-toggle" class="menu-toggle d-lg-none">
-            <i class="fa-solid fa-bars"></i>
-        </label>
-        <div class="header-content"></div>
+        <div class="header-content">
+            <button type="button" class="menu-toggle d-lg-none" aria-label="Open menu" onclick="toggleMobileMenu()" onpointerup="toggleMobileMenu()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
     </header>
 
     <main>
@@ -353,6 +356,51 @@
 </div>
 
 <script>
+function openMobileMenu() {
+    const sidebar = document.getElementById('mobileSidebar');
+    const overlay = document.getElementById('menuOverlay');
+    document.body.classList.add('menu-open');
+    document.body.style.overflow = 'hidden';
+    if (sidebar && window.innerWidth <= 992) {
+        sidebar.style.display = 'block';
+        sidebar.style.position = 'fixed';
+        sidebar.style.left = '0';
+        sidebar.style.top = '0';
+        sidebar.style.bottom = '0';
+        sidebar.style.height = '100%';
+        sidebar.style.width = 'min(250px, calc(100vw - 88px))';
+        sidebar.style.transform = 'translateX(0)';
+        sidebar.style.zIndex = '1050';
+    }
+    if (overlay && window.innerWidth <= 992) {
+        overlay.style.display = 'block';
+        overlay.style.position = 'fixed';
+        overlay.style.inset = '58px 0 0 0';
+        overlay.style.zIndex = '1049';
+    }
+}
+
+function closeMobileMenu() {
+    const sidebar = document.getElementById('mobileSidebar');
+    const overlay = document.getElementById('menuOverlay');
+    document.body.classList.remove('menu-open');
+    document.body.style.overflow = '';
+    if (sidebar && window.innerWidth <= 992) {
+        sidebar.style.transform = 'translateX(-100%)';
+    }
+    if (overlay) {
+        overlay.style.display = 'none';
+    }
+}
+
+function toggleMobileMenu() {
+    if (document.body.classList.contains('menu-open')) {
+        closeMobileMenu();
+    } else {
+        openMobileMenu();
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
 
     function handleSuffix(select, otherInput) {
@@ -415,8 +463,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleBtn = document.getElementById('themeToggleBtn');
     const icon = document.getElementById('themeToggleIcon');
     const text = document.getElementById('themeToggleText');
+    const body = document.body;
+    const menuToggle = document.querySelector('.menu-toggle');
+    const menuClose = document.querySelector('.menu-close');
+    const menuOverlay = document.querySelector('.menu-overlay');
 
     if (!toggleBtn || !icon || !text) return;
+
+    function setMenuOpen(isOpen) {
+        if (isOpen) {
+            openMobileMenu();
+        } else {
+            closeMobileMenu();
+        }
+    }
+
+    menuToggle?.addEventListener('click', () => {
+        setMenuOpen(!body.classList.contains('menu-open'));
+    });
+
+    menuClose?.addEventListener('click', () => setMenuOpen(false));
+    menuOverlay?.addEventListener('click', () => setMenuOpen(false));
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 992) {
+            setMenuOpen(false);
+        } else {
+            closeMobileMenu();
+        }
+    });
 
     function applyTheme(theme) {
         const isDark = theme === 'dark';
