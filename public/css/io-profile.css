@@ -854,9 +854,9 @@ main.container.fluid{
     height: auto;
     border-radius: 14px;
     overflow: hidden;
-    background: #f7f7f7;
-    border: 1px solid rgba(0,0,0,.08);
-    box-shadow: 0 14px 36px rgba(10, 30, 22, .18);
+    background: #1a1f24;
+    border: 1px solid rgba(255,255,255,.08);
+    box-shadow: 0 14px 36px rgba(0, 0, 0, .30);
 }
 
 .side-content{
@@ -866,10 +866,10 @@ main.container.fluid{
 .profile{
     margin: 0 0 .8rem;
     padding: .9rem .7rem .85rem;
-    border: 0;
+    border: 1px solid rgba(255,255,255,.08);
     border-radius: 12px;
-    background: #fff;
-    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    background: #12171d;
+    box-shadow: none;
     text-align: left;
     display: grid;
     grid-template-columns: 46px 1fr;
@@ -900,25 +900,30 @@ main.container.fluid{
     grid-column: 2;
     grid-row: 1;
     margin: 0;
-    font-size: 1.75rem;
+    font-size: 1.95rem;
     font-weight: 700;
-    color: #1b1b1b;
+    color: #f3f4f6;
     letter-spacing: 0;
-    line-height: 1.15;
-    white-space: nowrap;
+    line-height: 1.05;
     min-width: 0;
+    white-space: nowrap;
+    text-rendering: geometricPrecision;
 }
 
 .profile small{
     grid-column: 2;
     grid-row: 2;
-    color: #6d7278 !important;
-    font-size: 1rem;
+    color: #a4acb7 !important;
+    font-size: .58rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: .08em;
-    line-height: 1.1;
-    white-space: nowrap;
+    letter-spacing: .02em;
+    line-height: 1.08;
+    text-rendering: geometricPrecision;
+    white-space: normal;
+    min-width: 0;
+    max-width: 104px;
+    overflow: hidden;
 }
 
 .side-menu ul{
@@ -934,7 +939,7 @@ main.container.fluid{
     content: "MAIN";
     display: block;
     padding: .25rem .75rem .55rem;
-    color: #888f96;
+    color: #8a919c;
     font-size: 1.05rem;
     font-weight: 700;
     letter-spacing: .1em;
@@ -964,14 +969,14 @@ main.container.fluid{
     min-width: 20px;
     text-align: center;
     font-size: 1.55rem !important;
-    color: #646b72;
+    color: #c4cad3;
 }
 
 .side-menu a small,
 .side-menu button small{
     font-size: 1.05rem;
     font-weight: 700;
-    color: #33383e;
+    color: #f1f5f9;
     letter-spacing: 0;
     margin: 0 !important;
 }
@@ -992,14 +997,14 @@ main.container.fluid{
 
 .side-menu li a:hover,
 .side-menu li button:hover{
-    background: #f0f2f3;
-    border-color: #e5e8ea;
+    background: #242b33;
+    border-color: #33404d;
 }
 
 .side-menu li a.active,
 .side-menu li a[aria-current="page"]{
-    background: #ededed;
-    border-color: #e5e7ea;
+    background: #303943;
+    border-color: #44515f;
 }
 
 .side-menu li a.active span:first-child,
@@ -1033,8 +1038,8 @@ main.container.fluid{
 }
 
 .side-menu .sidebar-logout button:hover{
-    background: #fff1f1;
-    border-color: #ffd3d3;
+    background: #2a1b1d;
+    border-color: #55343a;
 }
 
 .main-content{
@@ -1162,17 +1167,7 @@ main{
     }
 
     .menu-close{
-        display: inline-flex !important;
-        width: 38px;
-        height: 38px;
-        margin: 0 0 .6rem auto;
-        background: transparent;
-        border: 0;
-        color: #111111;
-        font-size: 1.55rem;
-        border-radius: 10px;
-        position: relative;
-        z-index: 1041;
+        display: none !important;
     }
 
     .sidebar .side-content{
