@@ -1298,3 +1298,45 @@ body.dark-mode .clients-card-table th{
     color: #9ea7b3;
 }
 
+@media (max-width: 992px){
+    header .header-content{
+        position: relative !important;
+        overflow: visible !important;
+    }
+
+    header .menu-toggle.d-lg-none{
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        position: absolute !important;
+        top: 50% !important;
+        right: 12px !important;
+        left: auto !important;
+        transform: translateY(-50%) !important;
+        width: 40px !important;
+        height: 40px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 10px !important;
+        background: rgba(255,255,255,.22) !important;
+        color: #111111 !important;
+        box-shadow: none !important;
+        z-index: 999999 !important;
+    }
+
+    header .menu-toggle.d-lg-none i,
+    header .menu-toggle.d-lg-none svg{
+        display: block !important;
+        font-size: 1.35rem !important;
+        line-height: 1 !important;
+        color: inherit !important;
+        margin: 0 !important;
+    }
+}
+
+body.dark-mode header .menu-toggle.d-lg-none{
+    color: #e6edf3 !important;
+    background: rgba(255,255,255,.10) !important;
+}
+
