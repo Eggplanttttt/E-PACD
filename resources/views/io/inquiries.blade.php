@@ -14,9 +14,7 @@
 
 @section('content')
 
-<input type="checkbox" id="menu-toggle" hidden>
-
-<div class="sidebar">
+<div class="sidebar" id="mobileSidebar">
     <div class="side-content">
         <div class="profile">
             <div class="profile-image">
@@ -62,13 +60,15 @@
         </div>
     </div>
 </div>
+<button type="button" id="menuOverlay" class="menu-overlay d-lg-none" aria-label="Close menu" onclick="closeMobileMenu()" onpointerup="closeMobileMenu()"></button>
 
 <div class="main-content">
         <header>
-        <label for="menu-toggle" class="menu-toggle d-lg-none">
-            <i class="fa-solid fa-bars"></i>
-        </label>
-        <div class="header-content"></div>
+        <div class="header-content">
+            <button type="button" class="menu-toggle d-lg-none" aria-label="Open menu" onclick="toggleMobileMenu()" onpointerup="toggleMobileMenu()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
     </header>
 
     <main class="p-3 epacd-inq">
@@ -177,6 +177,51 @@
 
 @section('scripts')
 <script>
+function openMobileMenu() {
+    const sidebar = document.getElementById('mobileSidebar');
+    const overlay = document.getElementById('menuOverlay');
+    document.body.classList.add('menu-open');
+    document.body.style.overflow = 'hidden';
+    if (sidebar && window.innerWidth <= 992) {
+        sidebar.style.display = 'block';
+        sidebar.style.position = 'fixed';
+        sidebar.style.left = '0';
+        sidebar.style.top = '0';
+        sidebar.style.bottom = '0';
+        sidebar.style.height = '100%';
+        sidebar.style.width = 'min(250px, calc(100vw - 88px))';
+        sidebar.style.transform = 'translateX(0)';
+        sidebar.style.zIndex = '1050';
+    }
+    if (overlay && window.innerWidth <= 992) {
+        overlay.style.display = 'block';
+        overlay.style.position = 'fixed';
+        overlay.style.inset = '58px 0 0 0';
+        overlay.style.zIndex = '1049';
+    }
+}
+
+function closeMobileMenu() {
+    const sidebar = document.getElementById('mobileSidebar');
+    const overlay = document.getElementById('menuOverlay');
+    document.body.classList.remove('menu-open');
+    document.body.style.overflow = '';
+    if (sidebar && window.innerWidth <= 992) {
+        sidebar.style.transform = 'translateX(-100%)';
+    }
+    if (overlay) {
+        overlay.style.display = 'none';
+    }
+}
+
+function toggleMobileMenu() {
+    if (document.body.classList.contains('menu-open')) {
+        closeMobileMenu();
+    } else {
+        openMobileMenu();
+    }
+}
+
     // --- CUSTOM MODAL FUNCTIONS ---
     const customModal = document.getElementById("customModal");
     const customModalMessage = document.getElementById("customModalMessage");
@@ -711,6 +756,9 @@ const THEME_KEY = 'admin_theme';
 const toggleBtn = document.getElementById('themeToggleBtn');
 const icon = document.getElementById('themeToggleIcon');
 const text = document.getElementById('themeToggleText');
+const menuToggle = document.querySelector('.menu-toggle');
+const menuClose = document.querySelector('.menu-close');
+const menuOverlay = document.querySelector('.menu-overlay');
 
 function applyTheme(theme) {
     const isDark = theme === 'dark';
@@ -725,6 +773,14 @@ toggleBtn?.addEventListener('click', () => {
     const next = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
     localStorage.setItem(THEME_KEY, next);
     applyTheme(next);
+});
+menuToggle?.addEventListener('click', () => toggleMobileMenu());
+menuClose?.addEventListener('click', () => closeMobileMenu());
+menuOverlay?.addEventListener('click', () => closeMobileMenu());
+window.addEventListener('resize', () => {
+    if (window.innerWidth > 992) {
+        closeMobileMenu();
+    }
 });
 window.history.pushState(null, null, window.location.href);
 window.onpopstate = function() {
