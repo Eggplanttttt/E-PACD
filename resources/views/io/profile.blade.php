@@ -15,9 +15,6 @@
 
 <div class="sidebar" id="mobileSidebar">
     <div class="side-content">
-        <button type="button" class="menu-close d-lg-none" aria-label="Close menu" onclick="closeMobileMenu()" onpointerup="closeMobileMenu()">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
         <div class="profile">
             <div class="profile-image">
                 <img src="{{ asset('assets/logoo.png') }}" class="rounded-circle" width="100" height="100" alt="Logo">
