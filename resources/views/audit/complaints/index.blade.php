@@ -14,17 +14,18 @@
 
 @section('content')
 
-<input type="checkbox" id="menu-toggle">
-
 {{-- SIDEBAR (Audit) --}}
-<div class="sidebar">
+<div class="sidebar" id="mobileSidebar">
     <div class="side-content">
+        <button type="button" class="menu-close d-lg-none" aria-label="Close menu" onclick="closeMobileMenu()" onpointerup="closeMobileMenu()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
         <div class="profile">
             <div class="profile-image">
                 <img src="{{ asset('assets/logoo.png') }}" class="rounded-circle" width="100" height="100">
             </div>
             <h4>E-PACD</h4>
-            <small>Audit Office</small>
+            <small>Audit</small>
         </div>
 
         <div class="side-menu">
@@ -52,21 +53,23 @@
         </div>
     </div>
 </div>
+<button type="button" id="menuOverlay" class="menu-overlay d-lg-none" aria-label="Close menu" onclick="closeMobileMenu()" onpointerup="closeMobileMenu()"></button>
 
 <div class="main-content">
     {{-- HEADER --}}
     <header>
-        <label for="menu-toggle" class="menu-toggle d-lg-none">
-            <i class="fa-solid fa-bars"></i>
-        </label>
-        <div class="header-content"></div>
+        <div class="header-content">
+            <button type="button" class="menu-toggle d-lg-none" aria-label="Open menu" onclick="toggleMobileMenu()" onpointerup="toggleMobileMenu()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
     </header>
 
     <main>
         <div class="vd-page">
             <div class="vd-top">
                 <div>
-                    <div class="vd-breadcrumb">Audit Office / Complaints</div>
+                    <div class="vd-breadcrumb">Audit / Complaints</div>
                     <h1 class="vd-title">
                         Pending Complaints
                         <span class="vd-title-icon"><i class="fa-solid fa-comments"></i></span>
@@ -87,7 +90,7 @@
                             </li>
                             <li>
                                 <a class="dropdown-item" href="{{ route('audit.complaints.rejected') }}">
-                                    Spam List <i class="fa-solid fa-file-circle-exclamation ms-1"></i>
+                                    Spams <i class="fa-solid fa-file-circle-exclamation ms-1"></i>
                                 </a>
                             </li>
                         </ul>
@@ -140,37 +143,39 @@
                         <tbody>
                                 @foreach($complaints as $complaint)
                                     <tr>
-                                        <td></td>
-                                        <td>{{ $complaint->name ?? '-' }}</td>
-                                        <td>{{ $complaint->client_type }}</td>
-                                        <td>{{ $complaint->created_at }}</td>
-                                        <td>
+                                        <td data-label="ID"></td>
+                                        <td data-label="Name">{{ $complaint->name ?? '-' }}</td>
+                                        <td data-label="Client Type">{{ $complaint->client_type }}</td>
+                                        <td data-label="Date">{{ $complaint->created_at }}</td>
+                                        <td data-label="Message">
                                             <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#complaintModal{{ $complaint->id }}">
                                                 View
                                             </button>
                                         </td>
-                                        <td>
+                                        <td data-label="Status">
                                             @php
                                                 $st = strtolower($complaint->status ?? 'pending');
                                                 $badge = $st === 'pending' ? 'vd-badge-warning' : 'vd-badge-success';
                                             @endphp
                                             <span class="vd-badge {{ $badge }}">{{ $complaint->status }}</span>
                                         </td>
-                                        <td class="text-end">
+                                        <td class="text-end vd-actions-cell" data-label="Actions">
                                             @if($complaint->status == 'Pending')
-                                                <button type="button"
-                                                        class="btn vd-btn vd-btn-primary vd-btn-sm solve-btn"
-                                                        data-id="{{ $complaint->id }}"
-                                                        data-name="{{ $complaint->name ?? 'Client' }}">
-                                                    <i class="fa-solid fa-check me-1"></i> Solve
-                                                </button>
+                                                <div class="vd-row-actions">
+                                                    <button type="button"
+                                                            class="btn vd-btn vd-btn-primary vd-btn-sm solve-btn"
+                                                            data-id="{{ $complaint->id }}"
+                                                            data-name="{{ $complaint->name ?? 'Client' }}">
+                                                        <i class="fa-solid fa-check me-1"></i> Solve
+                                                    </button>
 
-                                                <button type="button"
-                                                        class="btn vd-btn vd-btn-danger vd-btn-sm spam-btn"
-                                                        data-id="{{ $complaint->id }}"
-                                                        data-name="{{ $complaint->name ?? 'Client' }}">
-                                                    <i class="fa-solid fa-ban me-1"></i> Spam
-                                                </button>
+                                                    <button type="button"
+                                                            class="btn vd-btn vd-btn-danger vd-btn-sm spam-btn"
+                                                            data-id="{{ $complaint->id }}"
+                                                            data-name="{{ $complaint->name ?? 'Client' }}">
+                                                        <i class="fa-solid fa-ban me-1"></i> Spam
+                                                    </button>
+                                                </div>
                                             @else
                                                 <span class="text-muted">No Actions</span>
                                             @endif
@@ -402,6 +407,51 @@
 <script src="{{ asset('js/datatables/jquery.dataTables.min.js') }}"></script>
 
 <script>
+function openMobileMenu() {
+    const sidebar = document.getElementById('mobileSidebar');
+    const overlay = document.getElementById('menuOverlay');
+    document.body.classList.add('menu-open');
+    document.body.style.overflow = 'hidden';
+    if (sidebar && window.innerWidth <= 992) {
+        sidebar.style.display = 'block';
+        sidebar.style.position = 'fixed';
+        sidebar.style.left = '0';
+        sidebar.style.top = '0';
+        sidebar.style.bottom = '0';
+        sidebar.style.height = '100%';
+        sidebar.style.width = 'min(250px, calc(100vw - 88px))';
+        sidebar.style.transform = 'translateX(0)';
+        sidebar.style.zIndex = '1050';
+    }
+    if (overlay && window.innerWidth <= 992) {
+        overlay.style.display = 'block';
+        overlay.style.position = 'fixed';
+        overlay.style.inset = '58px 0 0 0';
+        overlay.style.zIndex = '1049';
+    }
+}
+
+function closeMobileMenu() {
+    const sidebar = document.getElementById('mobileSidebar');
+    const overlay = document.getElementById('menuOverlay');
+    document.body.classList.remove('menu-open');
+    document.body.style.overflow = '';
+    if (sidebar && window.innerWidth <= 992) {
+        sidebar.style.transform = 'translateX(-100%)';
+    }
+    if (overlay) {
+        overlay.style.display = 'none';
+    }
+}
+
+function toggleMobileMenu() {
+    if (document.body.classList.contains('menu-open')) {
+        closeMobileMenu();
+    } else {
+        openMobileMenu();
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // IMAGE ZOOM MODAL
@@ -563,8 +613,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleBtn = document.getElementById('themeToggleBtn');
     const icon = document.getElementById('themeToggleIcon');
     const text = document.getElementById('themeToggleText');
+    const body = document.body;
+    const menuToggle = document.querySelector('.menu-toggle');
+    const menuClose = document.querySelector('.menu-close');
+    const menuOverlay = document.querySelector('.menu-overlay');
 
     if (!toggleBtn || !icon || !text) return;
+
+    function setMenuOpen(isOpen) {
+        if (isOpen) {
+            openMobileMenu();
+        } else {
+            closeMobileMenu();
+        }
+    }
+
+    menuToggle?.addEventListener('click', () => {
+        setMenuOpen(!body.classList.contains('menu-open'));
+    });
+
+    menuClose?.addEventListener('click', () => setMenuOpen(false));
+    menuOverlay?.addEventListener('click', () => setMenuOpen(false));
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 992) {
+            setMenuOpen(false);
+        } else {
+            closeMobileMenu();
+        }
+    });
 
     function applyTheme(theme) {
         const isDark = theme === 'dark';
