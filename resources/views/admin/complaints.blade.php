@@ -22,9 +22,11 @@
     @endphp
 @endauth --}}
 
-<input type="checkbox" id="menu-toggle">
-<div class="sidebar">
+<div class="sidebar" id="mobileSidebar">
     <div class="side-content">
+        <button type="button" class="menu-close d-lg-none" aria-label="Close menu" onclick="document.body.classList.remove('menu-open'); document.getElementById('mobileSidebar').style.transform='translateX(-100%)'; document.getElementById('menuOverlay').style.display='none';">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
         <div class="profile">
             <div class="profile-image">
                 <img src="{{ asset('assets/logoo.png') }}" class="rounded-circle" width="100" height="100">
@@ -66,13 +68,15 @@
         </div>
     </div>
 </div>
+<button type="button" id="menuOverlay" class="menu-overlay d-lg-none" aria-label="Close menu" onclick="document.body.classList.remove('menu-open'); document.getElementById('mobileSidebar').style.transform='translateX(-100%)'; this.style.display='none';"></button>
 
 <div class="main-content">
     <header>
-        <label for="menu-toggle" class="menu-toggle d-lg-none">
-            <i class="fa-solid fa-bars"></i>
-        </label>
-        <div class="header-content"></div>
+        <div class="header-content">
+            <button type="button" class="menu-toggle d-lg-none" aria-label="Open menu" onclick="(function(){ const sidebar = document.getElementById('mobileSidebar'); const overlay = document.getElementById('menuOverlay'); const isOpen = document.body.classList.toggle('menu-open'); if (sidebar) { sidebar.style.display='block'; sidebar.style.transform = isOpen ? 'translateX(0)' : 'translateX(-100%)'; } if (overlay) { overlay.style.display = isOpen ? 'block' : 'none'; } })()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
     </header>
 
     <main>
@@ -149,37 +153,39 @@
                         <tbody>
                                     @foreach($complaints as $complaint)
                                         <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                             <td>{{ $complaint->name ?? '-' }}</td>
-                                            <td>{{ $complaint->client_type }}</td>
-                                            <td>{{ $complaint->created_at }}</td>
-                                            <td>
+                                            <td data-label="ID">{{ $loop->iteration }}</td>
+                                             <td data-label="Name">{{ $complaint->name ?? '-' }}</td>
+                                            <td data-label="Client Type">{{ $complaint->client_type }}</td>
+                                            <td data-label="Date">{{ $complaint->created_at }}</td>
+                                            <td data-label="Message">
                                                 <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#complaintModal{{ $complaint->id }}">
                                                     View
                                                 </button>
                                             </td>
-                                            <td>
+                                            <td data-label="Status">
                                                 @php
                                                     $status = strtolower($complaint->status ?? 'pending');
                                                     $badge = $status === 'pending' ? 'vd-badge-warning' : 'vd-badge-success';
                                                 @endphp
                                                 <span class="vd-badge {{ $badge }}">{{ $complaint->status }}</span>
                                             </td>
-                                            <td class="text-end">
+                                            <td class="text-end vd-actions-cell" data-label="Actions">
                                                 @if($complaint->status == 'Pending')
-                                                    <button type="button"
-                                                            class="btn vd-btn vd-btn-primary vd-btn-sm solve-btn"
-                                                            data-id="{{ $complaint->id }}"
-                                                            data-name="{{ $complaint->name }}">
-                                                        <i class="fa-solid fa-check me-1"></i> Solve
-                                                    </button>
+                                                    <div class="vd-row-actions">
+                                                        <button type="button"
+                                                                class="btn vd-btn vd-btn-primary vd-btn-sm solve-btn"
+                                                                data-id="{{ $complaint->id }}"
+                                                                data-name="{{ $complaint->name }}">
+                                                            <i class="fa-solid fa-check me-1"></i> Solve
+                                                        </button>
 
-                                                    <button type="button"
-                                                            class="btn vd-btn vd-btn-danger vd-btn-sm spam-btn"
-                                                            data-id="{{ $complaint->id }}"
-                                                            data-name="{{ $complaint->name }}">
-                                                        <i class="fa-solid fa-ban me-1"></i> Spam
-                                                    </button>
+                                                        <button type="button"
+                                                                class="btn vd-btn vd-btn-danger vd-btn-sm spam-btn"
+                                                                data-id="{{ $complaint->id }}"
+                                                                data-name="{{ $complaint->name }}">
+                                                            <i class="fa-solid fa-ban me-1"></i> Spam
+                                                        </button>
+                                                    </div>
                                                 @else
                                                     <span class="text-muted">No Actions</span>
                                                 @endif
@@ -624,6 +630,28 @@ $(document).ready(function() {
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    const body = document.body;
+    const menuToggle = document.querySelector('.menu-toggle');
+    const menuClose = document.querySelector('.menu-close');
+    const menuOverlay = document.querySelector('.menu-overlay');
+
+    function setMenuOpen(isOpen) {
+        body.classList.toggle('menu-open', isOpen);
+    }
+
+    menuToggle?.addEventListener('click', () => {
+        setMenuOpen(!body.classList.contains('menu-open'));
+    });
+
+    menuClose?.addEventListener('click', () => setMenuOpen(false));
+    menuOverlay?.addEventListener('click', () => setMenuOpen(false));
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 992) {
+            setMenuOpen(false);
+        }
+    });
+
     const THEME_KEY = 'admin_theme';
     const toggleBtn = document.getElementById('themeToggleBtn');
     const icon = document.getElementById('themeToggleIcon');
