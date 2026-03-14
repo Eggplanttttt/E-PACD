@@ -1612,8 +1612,43 @@ body.dark-mode #table-feedback.table-hover > tbody > tr:hover > *{
     border-top-color: #2d333b !important;
   }
 
-  body.dark-mode .table-wrap table tbody td::before{
+body.dark-mode .table-wrap table tbody td::before{
     color: #9ea7b3;
+  }
+}
+
+@media (max-width: 992px){
+  .sidebar .side-content{
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding-bottom: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .sidebar .profile{
+    flex-shrink: 0;
+  }
+
+  .sidebar .side-menu{
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+  }
+
+  .sidebar .side-menu ul{
+    flex: 1 1 auto;
+    min-height: 0 !important;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 18px !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .sidebar .side-menu .sidebar-logout{
+    margin-top: auto !important;
+    padding-top: .75rem;
   }
 }
 
