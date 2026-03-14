@@ -24,9 +24,11 @@
     {{ redirect()->route('home') }}
 @endauth --}}
 
-<input type="checkbox" id="menu-toggle">
-<div class="sidebar">
+<div class="sidebar" id="mobileSidebar">
     <div class="side-content">
+        <button type="button" class="menu-close d-lg-none" aria-label="Close menu" onclick="closeMobileMenu()" onpointerup="closeMobileMenu()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
         <div class="profile">
             <div class="profile-image">
                 <img src="{{ asset('assets/logoo.png') }}" class="rounded-circle" width="100" height="100">
@@ -68,13 +70,15 @@
         </div>
     </div>
 </div>
+<button type="button" id="menuOverlay" class="menu-overlay d-lg-none" aria-label="Close menu" onclick="closeMobileMenu()" onpointerup="closeMobileMenu()"></button>
 
 <div class="main-content">
     <header>
-        <label for="menu-toggle" class="menu-toggle d-lg-none">
-            <i class="fa-solid fa-bars"></i>
-        </label>
-        <div class="header-content"></div>
+        <div class="header-content">
+            <button type="button" class="menu-toggle d-lg-none" aria-label="Open menu" onclick="toggleMobileMenu()" onpointerup="toggleMobileMenu()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
     </header>
     <main class="page-shell">
 
@@ -112,42 +116,6 @@
     <div class="page-card">
         <div class="card-head">
             <div class="card-head-left">
-                <h3>Chat Ratings</h3>
-                <small>Quick 5-star ratings submitted during client logout</small>
-            </div>
-        </div>
-
-        <div class="table-wrap mb-4">
-            <table class="table table-hover align-middle w-100">
-                <thead>
-                    <tr>
-                        <th>Client Type</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Stars</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($chatRatings as $rating)
-                        <tr>
-                            <td><div class="cell-strong">{{ $rating->client_type }}</div></td>
-                            <td>{{ $rating->client_name ?? 'N/A' }}</td>
-                            <td>{{ $rating->client_email ?? 'N/A' }}</td>
-                            <td><span class="pill">{{ str_repeat('★', (int) $rating->stars) }}</span></td>
-                            <td>{{ $rating->created_at?->format('Y-m-d h:i A') ?? 'N/A' }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="text-center text-muted">No chat ratings yet.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-
-        <div class="card-head">
-            <div class="card-head-left">
                 <h3>Feedback Summary</h3>
                 <small>Client Type • Date • Average Rate</small>
             </div>
@@ -183,14 +151,14 @@
                             $averageWord = $ratingMap[round($average)] ?? 'N/A';
                         @endphp
                         <tr>
-                            <td>
+                            <td data-label="Client Type">
                                 <div class="cell-strong">{{ $feedback->client_type }}</div>
                             </td>
-                            <td>{{ $feedback->date }}</td>
-                            <td>
+                            <td data-label="Date">{{ $feedback->date }}</td>
+                            <td data-label="Average Rate">
                                 <span class="pill">{{ $averageWord }}</span>
                             </td>
-                            <td class="text-center">
+                            <td class="text-center" data-label="Actions">
                                 <button class="btn btn-view" data-bs-toggle="modal" data-bs-target="#view-{{ $feedback->id }}">
                                     <i class="fa-regular fa-eye me-1"></i> View
                                 </button>
@@ -209,8 +177,10 @@
                                     <div class="modal-body">
                                         <p><strong>Client Type:</strong> {{ $feedback->client_type }}</p>
                                         <p><strong>Date:</strong> {{ $feedback->date }}</p>
-                                        <p><strong>Campus Transacted:</strong> Diffun - Campus</p>
+                                        <p><strong>Sex:</strong> {{ $feedback->sex_type ?? 'N/A' }}</p>
+                                        <p><strong>Age:</strong> {{ $feedback->age ?? 'N/A' }}</p>
                                         <p><strong>Contact Number:</strong> {{ $feedback->contact_no ?? 'N/A' }}</p>
+                                        <p><strong>Campus Transacted:</strong> Diffun - Campus</p>
                                         <p><strong>Service Availed:</strong> {{ $feedback->service_availed ?? 'N/A' }}</p>
                                         <p><strong>CC1:</strong> {{ $feedback->CC1 ?? 'N/A' }}</p>
                                         <p><strong>CC2:</strong> {{ $feedback->CC2 ?? 'N/A' }}</p>
@@ -463,6 +433,51 @@
 <script src="{{ asset('js/datatables/jquery.dataTables.min.js') }}"></script>
 
 <script>
+function openMobileMenu() {
+    const sidebar = document.getElementById('mobileSidebar');
+    const overlay = document.getElementById('menuOverlay');
+    document.body.classList.add('menu-open');
+    document.body.style.overflow = 'hidden';
+    if (sidebar && window.innerWidth <= 992) {
+        sidebar.style.display = 'block';
+        sidebar.style.position = 'fixed';
+        sidebar.style.left = '0';
+        sidebar.style.top = '0';
+        sidebar.style.bottom = '0';
+        sidebar.style.height = '100%';
+        sidebar.style.width = 'min(250px, calc(100vw - 88px))';
+        sidebar.style.transform = 'translateX(0)';
+        sidebar.style.zIndex = '1050';
+    }
+    if (overlay && window.innerWidth <= 992) {
+        overlay.style.display = 'block';
+        overlay.style.position = 'fixed';
+        overlay.style.inset = '58px 0 0 0';
+        overlay.style.zIndex = '1049';
+    }
+}
+
+function closeMobileMenu() {
+    const sidebar = document.getElementById('mobileSidebar');
+    const overlay = document.getElementById('menuOverlay');
+    document.body.classList.remove('menu-open');
+    document.body.style.overflow = '';
+    if (sidebar && window.innerWidth <= 992) {
+        sidebar.style.transform = 'translateX(-100%)';
+    }
+    if (overlay) {
+        overlay.style.display = 'none';
+    }
+}
+
+function toggleMobileMenu() {
+    if (document.body.classList.contains('menu-open')) {
+        closeMobileMenu();
+    } else {
+        openMobileMenu();
+    }
+}
+
 
 //     document.getElementById('feedbackFilter').addEventListener('keyup', function () {
 //     let filter = this.value.toLowerCase();
@@ -707,6 +722,33 @@ tbody.innerHTML += avgRow;
     const toggleBtn = document.getElementById('themeToggleBtn');
     const icon = document.getElementById('themeToggleIcon');
     const text = document.getElementById('themeToggleText');
+    const body = document.body;
+    const menuToggle = document.querySelector('.menu-toggle');
+    const menuClose = document.querySelector('.menu-close');
+    const menuOverlay = document.querySelector('.menu-overlay');
+
+    function setMenuOpen(isOpen) {
+        if (isOpen) {
+            openMobileMenu();
+        } else {
+            closeMobileMenu();
+        }
+    }
+
+    menuToggle?.addEventListener('click', () => {
+        setMenuOpen(!body.classList.contains('menu-open'));
+    });
+
+    menuClose?.addEventListener('click', () => setMenuOpen(false));
+    menuOverlay?.addEventListener('click', () => setMenuOpen(false));
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 992) {
+            setMenuOpen(false);
+        } else {
+            closeMobileMenu();
+        }
+    });
 
     function applyTheme(theme) {
         const isDark = theme === 'dark';
